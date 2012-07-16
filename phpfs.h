@@ -57,7 +57,12 @@ enum
     free( in.payload ); \
     free( out.payload )
 
-int phpfs_fuse_start( struct phpfs *phpfs , char *mounting_point );
-void phpfs_allocate_request( struct raw_data *in , uint8_t op , size_t header_length , const char *path );
+int phpfs_fuse_start( struct phpfs *phpfs ,
+                      char *mounting_point );
+
+void phpfs_allocate_request( struct raw_data *in ,
+                             uint8_t op ,
+                             size_t header_length ,
+                             const char *path );
 
 #endif
