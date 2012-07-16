@@ -1,0 +1,9 @@
+phpfs - Remote FUSE filesystem via PHP
+--------------------------------------------------------------------------------
+
+Dependencies:
+
+    fuse
+    libfuse-dev
+    libcurl4-openssl-dev
+
