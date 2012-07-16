@@ -6,14 +6,7 @@ int phpfs_readdir( const char *path ,
                    off_t offset ,
                    struct fuse_file_info *fi )
 {
-    struct raw_data in , out;
-
-    in.size = 1 + strlen( path );
-    in.payload = malloc( in.size );
-    *in.payload = READDIR;
-    memcpy( in.payload + 1 , path , in.size - 1 );
-
-    if ( CURLE_OK == phpfs_do_post( &in , &out ) )
+    PHPFS_DO_SIMPLE_REQUEST( READDIR )
     {
         char *p;
 
@@ -23,11 +16,7 @@ int phpfs_readdir( const char *path ,
             filler( buf , p , NULL , 0 );
         }
 
-        free( in.payload );
-        free( out.payload );
+        PHPFS_CLEANUP;
         return 0;
     }
-
-    free( in.payload );
-    return -ECOMM;
 }

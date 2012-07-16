@@ -6,30 +6,23 @@ int phpfs_read( const char *path ,
                 off_t offset ,
                 struct fuse_file_info *fi )
 {
-    struct raw_data in , out;
+    struct
+    {
+        uint32_t size;
+        uint32_t offset;
+    }
+    header;
 
     LOGF( "request read: size %lu ; offset %lu" , size , offset );
 
-    in.size = 1 + 2 * sizeof( uint32_t ) + strlen( path ); /* TODO type size */
-    in.payload = malloc( in.size );
-
-    *in.payload = READ;
-    memcpy( in.payload + 1 , &size , 4 );
-    memcpy( in.payload + 1 + 4 , &offset , 4 );
-    memcpy( in.payload + 1 + 2 * sizeof( uint32_t ) , path , in.size - (1 + 2 * sizeof( uint32_t ) ) );
-
-    if ( CURLE_OK == phpfs_do_post( &in , &out ) )
+    PHPFS_DO_REQUEST( READ )
     {
         LOGF( "read: %lu bytes" , out.size );
 
         /* TODO check chunk size */
         memcpy( buf , out.payload , out.size );
 
-        free( in.payload );
-        free( out.payload );
+        PHPFS_CLEANUP;
         return out.size;
     }
-
-    free( in.payload );
-    return -ECOMM;
 }

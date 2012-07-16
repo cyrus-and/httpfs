@@ -3,14 +3,7 @@
 int phpfs_getattr( const char *path ,
                    struct stat *stbuf )
 {
-    struct raw_data in , out;
-
-    in.size = 1 + strlen( path );
-    in.payload = malloc( in.size );
-    *in.payload = GETATTR;
-    memcpy( in.payload + 1 , path , in.size - 1 );
-
-    if ( CURLE_OK == phpfs_do_post( &in , &out ) )
+    PHPFS_DO_SIMPLE_REQUEST( GETATTR )
     {
         /* TODO check type */
         struct attrs
@@ -30,11 +23,7 @@ int phpfs_getattr( const char *path ,
 
         /* LOGF( "'%s': mode %o ; nlink %i ; size %i" , path , attrs.st_mode , attrs.st_nlink , attrs.st_size ); */
 
-        free( in.payload );
-        free( out.payload );
+        PHPFS_CLEANUP;
         return 0;
     }
-
-    free( in.payload );
-    return -ECOMM;
 }
