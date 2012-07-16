@@ -13,23 +13,6 @@
 #define PHPFS( field ) \
     ( ( struct phpfs * )fuse_get_context()->private_data )->field
 
-/* global context */
-struct phpfs
-{
-    const char *php_url;
-    CURL *curl;
-};
-
-/* operation code */
-enum
-{
-    NONE ,
-    GETATTR ,
-    READDIR ,
-    READ ,
-    /*...*/
-};
-
 /* convenience macro used implement a FUSE API function; 'out' is the response
    received and it's avaible to implementation; a structure named header must be
    filled with values to be passed to the PHP script before calling this macro;
@@ -56,6 +39,23 @@ enum
 #define PHPFS_CLEANUP \
     free( in.payload ); \
     free( out.payload )
+
+/* global context */
+struct phpfs
+{
+    const char *php_url;
+    CURL *curl;
+};
+
+/* operation code */
+enum
+{
+    NONE ,
+    GETATTR ,
+    READDIR ,
+    READ ,
+    /*...*/
+};
 
 int phpfs_fuse_start( struct phpfs *phpfs ,
                       char *mounting_point );
