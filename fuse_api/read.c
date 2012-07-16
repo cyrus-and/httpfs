@@ -18,7 +18,7 @@ int phpfs_read( const char *path ,
     memcpy( in.payload + 1 + 4 , &offset , 4 );
     memcpy( in.payload + 1 + 2 * sizeof( uint32_t ) , path , in.size - (1 + 2 * sizeof( uint32_t ) ) );
 
-    if ( CURLE_OK == phpfs_do_post( PHPFS( curl ) , PHPFS( php_url ) , &in , &out ) )
+    if ( CURLE_OK == phpfs_do_post( &in , &out ) )
     {
         LOGF( "read: %lu bytes" , out.size );
 

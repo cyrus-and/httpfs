@@ -10,7 +10,7 @@ int phpfs_getattr( const char *path ,
     *in.payload = GETATTR;
     memcpy( in.payload + 1 , path , in.size - 1 );
 
-    if ( CURLE_OK == phpfs_do_post( PHPFS( curl ) , PHPFS( php_url ) , &in , &out ) )
+    if ( CURLE_OK == phpfs_do_post( &in , &out ) )
     {
         /* TODO check type */
         struct attrs
