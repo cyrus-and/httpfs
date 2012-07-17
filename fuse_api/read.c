@@ -11,7 +11,7 @@ int phpfs_read( const char *path ,
         uint32_t size;
         uint32_t offset;
     }
-    header;
+    header = { size , offset };
 
     LOGF( "request read: size %lu ; offset %lu" , size , offset );
 
