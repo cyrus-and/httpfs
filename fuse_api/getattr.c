@@ -14,6 +14,8 @@ int phpfs_getattr( const char *path ,
         }
         attrs;
 
+        PHPFS_CHECK_RESPONSE_STATUS;
+
         memset( stbuf , 0 , sizeof( struct stat ) );
 
         attrs = *( struct attrs * )out.payload;

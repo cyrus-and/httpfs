@@ -35,16 +35,33 @@
         return -ECOMM; \
     } else
 
+/* check the response status and return if an error is occurred */
+#define PHPFS_CHECK_RESPONSE_STATUS \
+    out.size--; out.payload++; /* skip op code */ \
+    switch ( *out.payload ) { \
+    case ENTRY_NOT_FOUND: PHPFS_CLEANUP; return -ENOENT; \
+    case NOT_PERMITTED: PHPFS_CLEANUP; return -EPERM; \
+    }
+
 /* to be called before return in FUSE API functions */
 #define PHPFS_CLEANUP \
     free( in.payload ); \
-    free( out.payload )
+    free( out.payload - 1 ) /* match previous ++ */
 
 /* global context */
 struct phpfs
 {
     const char *php_url;
     CURL *curl;
+};
+
+/* response status */
+enum
+{
+    OK ,
+    ENTRY_NOT_FOUND ,
+    NOT_PERMITTED ,
+    /*...*/
 };
 
 /* operation code */

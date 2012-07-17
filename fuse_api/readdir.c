@@ -10,6 +10,8 @@ int phpfs_readdir( const char *path ,
     {
         char *p;
 
+        PHPFS_CHECK_RESPONSE_STATUS;
+
         for ( p = out.payload ; p - out.payload < out.size ; p += strlen( p ) + 1 )
         {
             /* LOGF( "dir entry: '%s'" , p ); */

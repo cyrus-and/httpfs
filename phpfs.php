@@ -1,5 +1,16 @@
 <?php
 
+error_reporting( 0 );
+
+function check_file_exists( $path )
+{
+    if ( file_exists( $path ) === FALSE )
+    {
+        printf( '%c' , 1 ); /* ENTRY_NOT_FOUND */
+        exit;
+    }
+}
+
 // TODO this is a stub
 
 $post = file_get_contents('php://input');
@@ -16,36 +27,54 @@ switch ( $arr['op'] )
 case 1: // getattr
     $arr = unpack("a*path", $post);
     $path = $arr['path'];
-    @ $s = stat( $path );
+    check_file_exists( $path );
+    $s = stat( $path );
     if ( $s === FALSE )
     {
-        echo pack('III', 0,0,0);
-        // echo '0:0:0\n';
+        printf( '%c' , 2 ); /* NOT_PERMITTED */
     }
     else
     {
+        printf( '%c' , 0 );
         echo pack('III', $s['mode'] , $s['nlink'] , $s['size']);
-        // echo '$s[mode]:$s[nlink]:$s[size]\n';
     }
     break;
 
 case 2: // ls
     $arr = unpack("a*path", $post);
     $path = $arr['path'];
-    foreach ( scandir( $path ) as $entry )
+    check_file_exists( $path );
+    $d = scandir( $path );
+    if ( $d === FALSE )
     {
-        /* echo pack( 'a*' , $entry ); */
-        echo $entry; printf( '%c' , 0 );
+        printf( '%c' , 2 ); /* NOT_PERMITTED */
+    }
+    else
+    {
+        printf( '%c' , 0 );
+        foreach ( $d as $entry )
+        {
+            /* echo pack( 'a*' , $entry ); */
+            echo $entry; printf( '%c' , 0 );
+        }
     }
     break;
 
 case 3: // read
     $arr = unpack("Lsize/Loffset/a*path", $post);
-    file_put_contents( "/tmp/phpfs.log" , ">>> REQUEST\n" . print_r( $arr , true ) , FILE_APPEND );
-    $fd = fopen( $arr['path'] , 'r' );
-    fseek( $fd , $arr['offset'] );
-    echo fread( $fd , $arr['size'] );
-    fclose( $fd );
+    $path = $arr['path'];
+    check_file_exists( $path );
+    $fd = fopen( $path , 'r' );
+    if ( fseek( $fd , $arr['offset'] ) == -1 )
+    {
+        printf( '%c' , 2 ); /* NOT_PERMITTED */
+    }
+    else
+    {
+        printf( '%c' , 0 );
+        echo fread( $fd , $arr['size'] );
+        fclose( $fd );
+    }
     break;
 
 default:

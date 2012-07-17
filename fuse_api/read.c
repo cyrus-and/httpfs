@@ -17,6 +17,8 @@ int phpfs_read( const char *path ,
 
     PHPFS_DO_REQUEST( READ )
     {
+        PHPFS_CHECK_RESPONSE_STATUS;
+
         LOGF( "read: %lu bytes" , out.size );
 
         /* TODO check chunk size */
