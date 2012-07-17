@@ -6,7 +6,7 @@
 int phpfs_fuse_start( struct phpfs *phpfs , char *mounting_point )
 {
     int argc;
-    char *argv[ 3 ];
+    char *argv[ 4 ];
 
     const struct fuse_operations operations = {
         FUSE_OPERATION( getattr ) ,
@@ -18,6 +18,9 @@ int phpfs_fuse_start( struct phpfs *phpfs , char *mounting_point )
     argc = 0;
     argv[ argc++ ] = "phpfs";
     argv[ argc++ ] = "-s"; /* single thread */
+#ifdef DEBUG
+    argv[ argc++ ] = "-d"; /* debug and core dump */
+#endif
     argv[ argc++ ] = mounting_point;
 
     return fuse_main( argc , argv , &operations , phpfs );

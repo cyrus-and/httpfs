@@ -3,14 +3,16 @@
 
 #ifdef DEBUG
 
-#include <syslog.h>
+#include <stdio.h>
+
+#define DEBUG_PREFIX ">>> "
 
 #define LOG( string ) \
-    do syslog( LOG_USER | LOG_DEBUG , "%s\n" , string ); \
+    do printf( DEBUG_PREFIX "%s\n" , string ); \
     while ( 0 )
 
 #define LOGF( format , ... ) \
-    do syslog( LOG_USER | LOG_DEBUG , format "\n" , ##__VA_ARGS__ ); \
+    do printf( DEBUG_PREFIX format "\n" , ##__VA_ARGS__ ); \
     while ( 0 )
 
 #else /* not DEBUG */
