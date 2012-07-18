@@ -18,7 +18,7 @@ int phpfs_getattr( const char *path ,
 
         memset( stbuf , 0 , sizeof( struct stat ) );
 
-        attrs = *( struct attrs * )out.payload;
+        attrs = *( struct attrs * )response.payload;
         stbuf->st_mode = attrs.st_mode;
         stbuf->st_nlink = attrs.st_nlink;
         stbuf->st_size = attrs.st_size;

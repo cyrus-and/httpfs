@@ -19,12 +19,12 @@ int phpfs_read( const char *path ,
     {
         PHPFS_CHECK_RESPONSE_STATUS;
 
-        LOGF( "read: %lu bytes" , out.size );
+        LOGF( "read: %lu bytes" , response.size );
 
         /* TODO check chunk size */
-        memcpy( buf , out.payload , out.size );
+        memcpy( buf , response.payload , response.size );
 
         PHPFS_CLEANUP;
-        return out.size;
+        return response.size;
     }
 }

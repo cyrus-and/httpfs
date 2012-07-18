@@ -12,7 +12,7 @@ int phpfs_readdir( const char *path ,
 
         PHPFS_CHECK_RESPONSE_STATUS;
 
-        for ( p = out.payload ; p - out.payload < out.size ; p += strlen( p ) + 1 )
+        for ( p = response.payload ; p - response.payload < response.size ; p += strlen( p ) + 1 )
         {
             /* LOGF( "dir entry: '%s'" , p ); */
             filler( buf , p , NULL , 0 );
