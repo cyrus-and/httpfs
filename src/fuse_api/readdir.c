@@ -14,7 +14,6 @@ int phpfs_readdir( const char *path ,
 
         for ( p = response.payload ; p - response.payload < response.size ; p += strlen( p ) + 1 )
         {
-            /* LOGF( "dir entry: '%s'" , p ); */
             filler( buf , p , NULL , 0 );
         }
 

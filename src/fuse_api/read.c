@@ -14,13 +14,9 @@ int phpfs_read( const char *path ,
     header = { htonl( size ) ,
                htonl( offset ) };
 
-    LOGF( "request read: size %lu ; offset %lu" , size , offset );
-
     PHPFS_DO_REQUEST( READ )
     {
         PHPFS_CHECK_RESPONSE_STATUS;
-
-        LOGF( "read: %lu bytes" , response.size );
 
         /* TODO check chunk size */
         memcpy( buf , response.payload , response.size );

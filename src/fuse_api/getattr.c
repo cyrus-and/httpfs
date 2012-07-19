@@ -23,8 +23,6 @@ int phpfs_getattr( const char *path ,
         stbuf->st_nlink = ntohl( attrs.st_nlink );
         stbuf->st_size = ntohl( attrs.st_size );
 
-        /* LOGF( "'%s': mode %o ; nlink %i ; size %i" , path , attrs.st_mode , attrs.st_nlink , attrs.st_size ); */
-
         PHPFS_CLEANUP;
         return 0;
     }
