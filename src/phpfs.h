@@ -1,6 +1,37 @@
 #ifndef _PHPFS_PHPFS_H
 #define _PHPFS_PHPFS_H
 
+/*
+
+  Request format:
+
+  +--------+--------+------+
+  | opcode | fields | path |
+  +--------+--------+------+
+
+  - opcode: 1 byte that identifies the requested operation (see "operation code"
+            enum)
+
+  - fields: arbitrarily long (even 0) packed data in big endian byte order
+
+  - path: absolute Unix-like path
+
+  Response format:
+
+  +--------+------+
+  | status | data |
+  +--------+------+
+
+  - status: 1 byte that describes the result of the operation (see "response
+            status" enum)
+
+  - data: arbitrarily long (even 0) raw data
+
+  NOTE: these messages are carried over HTTP so there's no need to include an
+        additional length field
+
+*/
+
 /* common includes for API implementation */
 #include <fuse.h>
 #include <string.h>
