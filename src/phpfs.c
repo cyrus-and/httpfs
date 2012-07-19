@@ -18,8 +18,8 @@ int phpfs_fuse_start( struct phpfs *phpfs ,
 
     argc = 0;
     argv[ argc++ ] = "phpfs";
-    argv[ argc++ ] = "-s"; /* single thread */
 #ifndef NDEBUG
+    argv[ argc++ ] = "-s"; /* single thread */
     argv[ argc++ ] = "-d"; /* debug and core dump */
 #endif
     argv[ argc++ ] = mounting_point;
