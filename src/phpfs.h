@@ -20,21 +20,20 @@
    macro; this macro expects a following block where the logic should be
    implemented */
 #define PHPFS_DO_REQUEST( op ) \
-    LOGF( "SEND REQUEST: opcode %i (%s)" , op , __func__ ); \
-    struct raw_data _in = { 0 } , _out = { 0 } , response = { 0 }; \
+    _PHPFS_DO_REQUEST( op , \
     phpfs_allocate_request( &_in , op , sizeof( header ) , path ); \
-    memcpy( _in.payload + 1 , &header , sizeof( header ) ); \
-    if ( CURLE_OK != phpfs_do_post( &_in , &_out ) ) { \
-        LOG( "SEND REQUEST: failed" ); \
-        PHPFS_CLEANUP; \
-        return -ECOMM; \
-    } else
+    memcpy( _in.payload + 1 , &header , sizeof( header ) ); )
 
 /* same as above but without header */
 #define PHPFS_DO_SIMPLE_REQUEST( op ) \
+    _PHPFS_DO_REQUEST( op , \
+    phpfs_allocate_request( &_in , op , 0 , path ); )
+
+/* common */
+#define _PHPFS_DO_REQUEST( op , prepare_header ) \
     LOGF( "SEND REQUEST: opcode %i (%s)" , op , __func__ ); \
     struct raw_data _in = { 0 } , _out = { 0 } , response = { 0 }; \
-    phpfs_allocate_request( &_in , op , 0 , path ); \
+    prepare_header \
     if ( CURLE_OK != phpfs_do_post( &_in , &_out ) ) { \
         LOG( "SEND REQUEST: failed" ); \
         PHPFS_CLEANUP; \
