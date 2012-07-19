@@ -3,7 +3,8 @@
 
 #define FUSE_OPERATION( op ) .op = phpfs_##op
 
-int phpfs_fuse_start( struct phpfs *phpfs , char *mounting_point )
+int phpfs_fuse_start( struct phpfs *phpfs ,
+                      char *mounting_point )
 {
     int argc;
     char *argv[ 4 ];
@@ -26,7 +27,10 @@ int phpfs_fuse_start( struct phpfs *phpfs , char *mounting_point )
     return fuse_main( argc , argv , &operations , phpfs );
 }
 
-void phpfs_allocate_request( struct raw_data *in , uint8_t op , size_t header_length , const char *path )
+void phpfs_allocate_request( struct raw_data *in ,
+                             uint8_t op ,
+                             size_t header_length ,
+                             const char *path )
 {
     /* produce OP<-- header_length -->path */
     in->size = 1 + header_length + strlen( path );
