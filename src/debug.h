@@ -1,7 +1,7 @@
 #ifndef _PHPFS_DEBUG_H
 #define _PHPFS_DEBUG_H
 
-#ifdef DEBUG
+#ifndef NDEBUG
 
 #include <stdio.h>
 
