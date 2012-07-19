@@ -36,7 +36,7 @@ case 1: // getattr
     else
     {
         printf( '%c' , 0 );
-        echo pack('III', $s['mode'] , $s['nlink'] , $s['size']);
+        echo pack('NNN', $s['mode'] , $s['nlink'] , $s['size']);
     }
     break;
 
@@ -61,7 +61,7 @@ case 2: // ls
     break;
 
 case 3: // read
-    $arr = unpack("Lsize/Loffset/a*path", $post);
+    $arr = unpack("Nsize/Noffset/a*path", $post);
     $path = $arr['path'];
     check_file_exists( $path );
     $fd = fopen( $path , 'r' );

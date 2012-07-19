@@ -8,9 +8,9 @@ int phpfs_getattr( const char *path ,
         /* TODO check type */
         struct attrs
         {
-            int st_mode;
-            int st_nlink;
-            int st_size;
+            uint32_t st_mode;
+            uint32_t st_nlink;
+            uint32_t st_size;
         }
         attrs;
 
@@ -19,9 +19,9 @@ int phpfs_getattr( const char *path ,
         memset( stbuf , 0 , sizeof( struct stat ) );
 
         attrs = *( struct attrs * )response.payload;
-        stbuf->st_mode = attrs.st_mode;
-        stbuf->st_nlink = attrs.st_nlink;
-        stbuf->st_size = attrs.st_size;
+        stbuf->st_mode = ntohl( attrs.st_mode );
+        stbuf->st_nlink = ntohl( attrs.st_nlink );
+        stbuf->st_size = ntohl( attrs.st_size );
 
         /* LOGF( "'%s': mode %o ; nlink %i ; size %i" , path , attrs.st_mode , attrs.st_nlink , attrs.st_size ); */
 
