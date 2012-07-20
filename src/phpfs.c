@@ -2,6 +2,7 @@
 #include "fuse_api/fuse_api.h"
 
 const char *PHPFS_OPCODE_NAMES[] = {
+    "NONE" ,
 #define _( x ) #x ,
 #include "fuse_functions.def"
 };
