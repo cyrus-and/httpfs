@@ -1,0 +1,5 @@
+_( OK )
+_( ENTRY_NOT_FOUND )
+_( NOT_PERMITTED )
+/*...*/
+#undef _

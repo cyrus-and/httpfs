@@ -96,29 +96,17 @@ struct phpfs
 };
 
 /* operation codes */
-#define _PHPFS_FUSE_FUNCTIONS \
-    _( getattr ) \
-    _( readdir ) \
-    _( read )
-    /*...*/
-
 #define _( x ) PHPFS_OPCODE_##x ,
-enum { PHPFS_OPCODE_NONE , _PHPFS_FUSE_FUNCTIONS };
-#undef _
-
+enum { PHPFS_OPCODE_NONE ,
+#include "fuse_functions.def"
+};
 extern const char *PHPFS_OPCODE_NAMES[];
 
 /* response status */
-#define _PHPFS_STATUSES \
-    _( OK ) \
-    _( ENTRY_NOT_FOUND ) \
-    _( NOT_PERMITTED )
-    /*...*/
-
 #define _( x ) PHPFS_STATUS_##x ,
-enum { _PHPFS_STATUSES };
-#undef _
-
+enum {
+#include "statuses.def"
+};
 extern const char *PHPFS_STATUS_NAMES[];
 
 int phpfs_fuse_start( struct phpfs *phpfs ,

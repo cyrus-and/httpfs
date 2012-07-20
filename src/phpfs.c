@@ -1,10 +1,15 @@
 #include "phpfs.h"
 #include "fuse_api/fuse_api.h"
 
+const char *PHPFS_OPCODE_NAMES[] = {
 #define _( x ) #x ,
-const char *PHPFS_OPCODE_NAMES[] = { _PHPFS_FUSE_FUNCTIONS };
-const char *PHPFS_STATUS_NAMES[] = { _PHPFS_STATUSES };
-#undef _
+#include "fuse_functions.def"
+};
+
+const char *PHPFS_STATUS_NAMES[] = {
+#define _( x ) #x ,
+#include "statuses.def"
+};
 
 int phpfs_fuse_start( struct phpfs *phpfs ,
                       char *mounting_point )
@@ -14,8 +19,7 @@ int phpfs_fuse_start( struct phpfs *phpfs ,
 
     const struct fuse_operations operations = {
 #define _( x ) .x = phpfs_##x ,
-        _PHPFS_FUSE_FUNCTIONS
-#undef _
+#include "fuse_functions.def"
     };
 
     argc = 0;

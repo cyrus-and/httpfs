@@ -1,0 +1,5 @@
+_( getattr )
+_( readdir )
+_( read )
+/*...*/
+#undef _
