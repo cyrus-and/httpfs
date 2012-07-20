@@ -62,7 +62,8 @@
 
 /* common */
 #define _PHPFS_DO_REQUEST( op , prepare_header ) \
-    LOGF( "SEND REQUEST: opcode %i (%s)" , op , __func__ ); \
+    LOGF( "SEND REQUEST: %s (%i)" , \
+          PHPFS_OPCODE_NAMES[ op ] , op ); \
     struct raw_data _in = { 0 } , _out = { 0 } , response = { 0 }; \
     prepare_header \
     if ( CURLE_OK != phpfs_do_post( &_in , &_out ) ) { \
@@ -73,12 +74,13 @@
 
 /* check the response status and return if an error is occurred */
 #define PHPFS_CHECK_RESPONSE_STATUS \
-    LOGF( "RESPONSE: status %i" , *_out.payload ); \
+    LOGF( "RESPONSE: %s (%i)" , \
+          PHPFS_STATUS_NAMES[ ( int )*_out.payload ] , *_out.payload ); \
     response.payload = _out.payload + 1; \
     response.size = _out.size - 1; \
     switch ( *_out.payload ) { \
-    case ENTRY_NOT_FOUND: PHPFS_CLEANUP; return -ENOENT; \
-    case NOT_PERMITTED: PHPFS_CLEANUP; return -EPERM; \
+    case PHPFS_STATUS_ENTRY_NOT_FOUND: PHPFS_CLEANUP; return -ENOENT; \
+    case PHPFS_STATUS_NOT_PERMITTED: PHPFS_CLEANUP; return -EPERM; \
     }
 
 /* to be called before return in FUSE API functions */
@@ -93,24 +95,31 @@ struct phpfs
     CURL *curl;
 };
 
-/* response status */
-enum
-{
-    OK ,
-    ENTRY_NOT_FOUND ,
-    NOT_PERMITTED ,
+/* operation codes */
+#define _PHPFS_FUSE_FUNCTIONS \
+    _( getattr ) \
+    _( readdir ) \
+    _( read )
     /*...*/
-};
 
-/* operation code */
-enum
-{
-    NONE ,
-    GETATTR ,
-    READDIR ,
-    READ ,
+#define _( x ) PHPFS_OPCODE_##x ,
+enum { PHPFS_OPCODE_NONE , _PHPFS_FUSE_FUNCTIONS };
+#undef _
+
+extern const char *PHPFS_OPCODE_NAMES[];
+
+/* response status */
+#define _PHPFS_STATUSES \
+    _( OK ) \
+    _( ENTRY_NOT_FOUND ) \
+    _( NOT_PERMITTED )
     /*...*/
-};
+
+#define _( x ) PHPFS_STATUS_##x ,
+enum { _PHPFS_STATUSES };
+#undef _
+
+extern const char *PHPFS_STATUS_NAMES[];
 
 int phpfs_fuse_start( struct phpfs *phpfs ,
                       char *mounting_point );

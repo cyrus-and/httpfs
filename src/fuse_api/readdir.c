@@ -6,7 +6,7 @@ int phpfs_readdir( const char *path ,
                    off_t offset ,
                    struct fuse_file_info *fi )
 {
-    PHPFS_DO_SIMPLE_REQUEST( READDIR )
+    PHPFS_DO_SIMPLE_REQUEST( PHPFS_OPCODE_readdir )
     {
         char *p;
 

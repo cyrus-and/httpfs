@@ -14,7 +14,7 @@ int phpfs_read( const char *path ,
     header = { htonl( size ) ,
                htonl( offset ) };
 
-    PHPFS_DO_REQUEST( READ )
+    PHPFS_DO_REQUEST( PHPFS_OPCODE_read )
     {
         PHPFS_CHECK_RESPONSE_STATUS;
 

@@ -1,7 +1,10 @@
 #include "phpfs.h"
 #include "fuse_api/fuse_api.h"
 
-#define FUSE_OPERATION( op ) .op = phpfs_##op
+#define _( x ) #x ,
+const char *PHPFS_OPCODE_NAMES[] = { _PHPFS_FUSE_FUNCTIONS };
+const char *PHPFS_STATUS_NAMES[] = { _PHPFS_STATUSES };
+#undef _
 
 int phpfs_fuse_start( struct phpfs *phpfs ,
                       char *mounting_point )
@@ -10,10 +13,9 @@ int phpfs_fuse_start( struct phpfs *phpfs ,
     char *argv[ 4 ];
 
     const struct fuse_operations operations = {
-        FUSE_OPERATION( getattr ) ,
-        FUSE_OPERATION( readdir ) ,
-        FUSE_OPERATION( read ) ,
-        /*...*/
+#define _( x ) .x = phpfs_##x ,
+        _PHPFS_FUSE_FUNCTIONS
+#undef _
     };
 
     argc = 0;

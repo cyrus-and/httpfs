@@ -3,7 +3,7 @@
 int phpfs_getattr( const char *path ,
                    struct stat *stbuf )
 {
-    PHPFS_DO_SIMPLE_REQUEST( GETATTR )
+    PHPFS_DO_SIMPLE_REQUEST( PHPFS_OPCODE_getattr )
     {
         /* TODO check type */
         struct attrs
