@@ -25,6 +25,11 @@ void phpfs_generate_php()
                 *p , ( int )(p - PHPFS_STATUS_NAMES ) );
     }
 
+#ifndef NDEBUG
+    /* debug mode */
+    printf( "\ndefine( 'DEBUG' , TRUE );\n\n" );
+#endif
+
     printf( "\n?>" );
 
     /* dump template */

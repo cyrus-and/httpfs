@@ -74,8 +74,9 @@
 
 /* check the response status and return if an error is occurred */
 #define PHPFS_CHECK_RESPONSE_STATUS \
-    LOGF( "RESPONSE: %s (%i)" , \
-          PHPFS_STATUS_NAMES[ ( int )*_out.payload ] , *_out.payload ); \
+    LOGF( "RESPONSE: %s (%i) %s" , \
+          PHPFS_STATUS_NAMES[ ( int )*_out.payload ] , *_out.payload , \
+          _out.size > 1 ? _out.payload + 1 : "" ); \
     response.payload = _out.payload + 1; \
     response.size = _out.size - 1; \
     switch ( *_out.payload ) { \

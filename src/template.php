@@ -1,19 +1,34 @@
 <?php
 
 error_reporting( 0 );
+if ( DEBUG ) set_error_handler( 'store_error' );
 
 /* UTILITY */
 
-function dump_status( $status )
+function store_error( $errno , $error )
 {
-    printf( '%c' , $status );
+    global $error_message;
+    $error_message = $error;
+}
+
+function dump_ok()
+{
+    printf( '%c' , OK );
+}
+
+function dump_error( $error , $custom_error_message = null )
+{
+    global $error_message;
+    printf( '%c' , $error );
+    $message = $custom_error_message ? $custom_error_message : $error_message;
+    if ( $message ) printf( "$message%c" , 0 );
 }
 
 function check_file_exists( $path )
 {
     if ( !file_exists( $path ) )
     {
-        dump_status( ENTRY_NOT_FOUND );
+        dump_error( ENTRY_NOT_FOUND );
         exit;
     }
 }
@@ -28,12 +43,12 @@ function phpfs_getattr( $data )
     $s = stat( $fields[ 'path' ] );
     if ( $s )
     {
-        dump_status( OK );
+        dump_ok();
         echo pack( 'NNN' , $s[ 'mode' ] , $s[ 'nlink' ] , $s[ 'size' ] );
     }
     else
     {
-        dump_status( NOT_PERMITTED );
+        dump_error( NOT_PERMITTED );
     }
 }
 
@@ -45,7 +60,7 @@ function phpfs_readdir( $data )
     $d = scandir( $fields[ 'path' ] );
     if ( $d )
     {
-        dump_status( OK );
+        dump_ok();
         foreach ( $d as $entry )
         {
             printf( "$entry%c" , 0 );
@@ -53,7 +68,7 @@ function phpfs_readdir( $data )
     }
     else
     {
-        dump_status( NOT_PERMITTED );
+        dump_error( NOT_PERMITTED );
     }
 }
 
@@ -65,14 +80,14 @@ function phpfs_read( $data )
     $f = fopen( $fields[ 'path' ] , 'r' );
     if ( $f )
     {
-        dump_status( OK );
+        dump_ok();
         fseek( $f , $fields[ 'offset' ] );
         echo fread( $f , $fields[ 'size' ] );
         fclose( $f );
     }
     else
     {
-        dump_status( NOT_PERMITTED );
+        dump_error( NOT_PERMITTED );
     }
 }
 
