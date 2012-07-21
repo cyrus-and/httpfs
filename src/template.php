@@ -2,85 +2,88 @@
 
 error_reporting( 0 );
 
+/* UTILITY */
+
+function dump_status( $status )
+{
+    printf( '%c' , $status );
+}
+
 function check_file_exists( $path )
 {
-    if ( file_exists( $path ) === FALSE )
+    if ( !file_exists( $path ) )
     {
-        printf( '%c' , ENTRY_NOT_FOUND );
+        dump_status( ENTRY_NOT_FOUND );
         exit;
     }
 }
 
-// TODO this is a stub
+/* FUSE API */
 
-$post = file_get_contents('php://input');
-
-$arr = unpack("Cop", $post);
-$post = substr( $post , 1 );
-
-file_put_contents( "/tmp/phpfs.log" , ">>> OP\n" . print_r( $arr , true ) , FILE_APPEND );
-
-ob_start();
-
-switch ( $arr['op'] )
+function phpfs_getattr( $data )
 {
-case phpfs_getattr:
-    $arr = unpack("a*path", $post);
-    $path = $arr['path'];
-    check_file_exists( $path );
-    $s = stat( $path );
-    if ( $s === FALSE )
+    $fields = unpack( 'a*path' , $data );
+    check_file_exists( $fields[ 'path' ] );
+
+    $s = stat( $fields[ 'path' ] );
+    if ( $s )
     {
-        printf( '%c' , NOT_PERMITTED );
+        dump_status( OK );
+        echo pack( 'NNN' , $s[ 'mode' ] , $s[ 'nlink' ] , $s[ 'size' ] );
     }
     else
     {
-        printf( '%c' , OK );
-        echo pack('NNN', $s['mode'] , $s['nlink'] , $s['size']);
+        dump_status( NOT_PERMITTED );
     }
-    break;
-
-case phpfs_readdir:
-    $arr = unpack("a*path", $post);
-    $path = $arr['path'];
-    check_file_exists( $path );
-    $d = scandir( $path );
-    if ( $d === FALSE )
-    {
-        printf( '%c' , NOT_PERMITTED );
-    }
-    else
-    {
-        printf( '%c' , OK );
-        foreach ( $d as $entry )
-        {
-            /* echo pack( 'a*' , $entry ); */
-            echo $entry; printf( '%c' , 0 );
-        }
-    }
-    break;
-
-case phpfs_read:
-    $arr = unpack("Nsize/Noffset/a*path", $post);
-    $path = $arr['path'];
-    check_file_exists( $path );
-    $fd = fopen( $path , 'r' );
-    if ( fseek( $fd , $arr['offset'] ) == -1 )
-    {
-        printf( '%c' , NOT_PERMITTED );
-    }
-    else
-    {
-        printf( '%c' , OK );
-        echo fread( $fd , $arr['size'] );
-        fclose( $fd );
-    }
-    break;
-
-default:
 }
 
-$output = ob_get_flush();
-file_put_contents( "/tmp/phpfs.log" , ">>> RESPONSE\n" . $output , FILE_APPEND );
+function phpfs_readdir( $data )
+{
+    $fields = unpack( 'a*path' , $data );
+    check_file_exists( $fields[ 'path' ] );
+
+    $d = scandir( $fields[ 'path' ] );
+    if ( $d )
+    {
+        dump_status( OK );
+        foreach ( $d as $entry )
+        {
+            printf( "$entry%c" , 0 );
+        }
+    }
+    else
+    {
+        dump_status( NOT_PERMITTED );
+    }
+}
+
+function phpfs_read( $data )
+{
+    $fields = unpack( 'Nsize/Noffset/a*path' , $data );
+    check_file_exists( $fields[ 'path' ] );
+
+    $f = fopen( $fields[ 'path' ] , 'r' );
+    if ( $f )
+    {
+        dump_status( OK );
+        fseek( $f , $fields[ 'offset' ] );
+        echo fread( $f , $fields[ 'size' ] );
+        fclose( $f );
+    }
+    else
+    {
+        dump_status( NOT_PERMITTED );
+    }
+}
+
+/*...*/
+
+/* MAIN */
+
+$post = file_get_contents( 'php://input' );
+$opcode = ord( $post );
+$function_name = $PHPFS_OPCODE_NAMES[ $opcode ];
+$data = substr( $post , 1 );
+call_user_func( $function_name , $data );
 
 ?>
