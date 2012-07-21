@@ -23,3 +23,9 @@ add_custom_command(
 )
 
 include_directories( ${CMAKE_CURRENT_BINARY_DIR} )
+
+add_custom_target(
+  test-local
+  COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/../test/test-local.sh
+  DEPENDS phpfs
+)
