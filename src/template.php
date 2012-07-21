@@ -6,7 +6,7 @@ function check_file_exists( $path )
 {
     if ( file_exists( $path ) === FALSE )
     {
-        printf( '%c' , 1 ); /* ENTRY_NOT_FOUND */
+        printf( '%c' , ENTRY_NOT_FOUND );
         exit;
     }
 }
@@ -24,34 +24,34 @@ ob_start();
 
 switch ( $arr['op'] )
 {
-case 1: // getattr
+case phpfs_getattr:
     $arr = unpack("a*path", $post);
     $path = $arr['path'];
     check_file_exists( $path );
     $s = stat( $path );
     if ( $s === FALSE )
     {
-        printf( '%c' , 2 ); /* NOT_PERMITTED */
+        printf( '%c' , NOT_PERMITTED );
     }
     else
     {
-        printf( '%c' , 0 );
+        printf( '%c' , OK );
         echo pack('NNN', $s['mode'] , $s['nlink'] , $s['size']);
     }
     break;
 
-case 2: // ls
+case phpfs_readdir:
     $arr = unpack("a*path", $post);
     $path = $arr['path'];
     check_file_exists( $path );
     $d = scandir( $path );
     if ( $d === FALSE )
     {
-        printf( '%c' , 2 ); /* NOT_PERMITTED */
+        printf( '%c' , NOT_PERMITTED );
     }
     else
     {
-        printf( '%c' , 0 );
+        printf( '%c' , OK );
         foreach ( $d as $entry )
         {
             /* echo pack( 'a*' , $entry ); */
@@ -60,18 +60,18 @@ case 2: // ls
     }
     break;
 
-case 3: // read
+case phpfs_read:
     $arr = unpack("Nsize/Noffset/a*path", $post);
     $path = $arr['path'];
     check_file_exists( $path );
     $fd = fopen( $path , 'r' );
     if ( fseek( $fd , $arr['offset'] ) == -1 )
     {
-        printf( '%c' , 2 ); /* NOT_PERMITTED */
+        printf( '%c' , NOT_PERMITTED );
     }
     else
     {
-        printf( '%c' , 0 );
+        printf( '%c' , OK );
         echo fread( $fd , $arr['size'] );
         fclose( $fd );
     }

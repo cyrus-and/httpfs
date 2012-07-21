@@ -5,11 +5,13 @@ const char *PHPFS_OPCODE_NAMES[] = {
     "NONE" ,
 #define _( x ) #x ,
 #include "fuse_functions.def"
+    NULL
 };
 
 const char *PHPFS_STATUS_NAMES[] = {
 #define _( x ) #x ,
 #include "statuses.def"
+    NULL
 };
 
 int phpfs_fuse_start( struct phpfs *phpfs ,
