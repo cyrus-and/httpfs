@@ -8,11 +8,11 @@
 #define DEBUG_PREFIX ">>> "
 
 #define LOG( string ) \
-    do printf( DEBUG_PREFIX "%s\n" , string ); \
+    do fprintf( stderr , DEBUG_PREFIX "%s\n" , string ); \
     while ( 0 )
 
 #define LOGF( format , ... ) \
-    do printf( DEBUG_PREFIX format "\n" , ##__VA_ARGS__ ); \
+    do fprintf( stderr , DEBUG_PREFIX format "\n" , ##__VA_ARGS__ ); \
     while ( 0 )
 
 #else /* not DEBUG */
