@@ -1,16 +1,18 @@
 #!/bin/bash
 
-echo 'Setting up the environment'
+echo '>>> Setting up the environment'
 mkdir -p ./www/
-mkdir -p ./mnt/
-echo 'Generating PHP file'
+mkdir -p /tmp/phpfs/
+echo '>>> Generating PHP file'
 ./phpfs generate > ./www/phpfs.php
-echo 'Starting web server on http://localhost:8000'
+echo '>>> Starting web server on http://localhost:8000'
 php -S localhost:8000 -t ./www/ &>> php.log &
 PHP=$!
-echo 'Mounting filesystem'
-./phpfs mount http://localhost:8000/phpfs.php mnt/ &>> ./phpfs.log &
+echo '>>> Mounting filesystem'
+./phpfs mount http://localhost:8000/phpfs.php /tmp/phpfs/ &>> ./phpfs.log &
 PHPFS=$!
-trap '{ fusermount -u mnt/; kill $PHP $PHPFS; } &> /dev/null' SIGINT
-echo 'Exit with Ctrl-C'
+echo ">>> Exit with: kill $PHP"
 wait $PHP
+fusermount -u /tmp/phpfs/ &> /dev/null
+kill $PHPFS &> /dev/null
+exit 0
