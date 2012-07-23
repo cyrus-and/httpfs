@@ -107,6 +107,23 @@ function phpfs_unlink( $data )
     }
 }
 
+function phpfs_rmdir( $data )
+{
+    $fields = unpack( 'a*path' , $data );
+    check_file_exists( $fields[ 'path' ] );
+
+    $u = rmdir( $fields[ 'path' ] );
+    if ( $u )
+    {
+        dump_ok();
+    }
+    else
+    {
+        dump_error( NOT_PERMITTED );
+    }
+}
+
+
 
 /*...*/
 

@@ -2,5 +2,6 @@ _( getattr )
 _( readdir )
 _( read )
 _( unlink )
+_( rmdir )
 /*...*/
 #undef _

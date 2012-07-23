@@ -1,8 +1,8 @@
 #include "../phpfs.h"
 
-int phpfs_unlink( const char *path )
+int phpfs_rmdir( const char *path )
 {
-    PHPFS_DO_SIMPLE_REQUEST( PHPFS_OPCODE_unlink )
+    PHPFS_DO_SIMPLE_REQUEST( PHPFS_OPCODE_rmdir )
     {
 
         PHPFS_CHECK_RESPONSE_STATUS;
