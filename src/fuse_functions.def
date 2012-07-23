@@ -4,6 +4,7 @@ _( open )
 _( read )
 _( write )
 _( truncate )
+_( create )
 _( unlink )
 _( rmdir )
 /*...*/

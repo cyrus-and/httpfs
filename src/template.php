@@ -130,6 +130,23 @@ function phpfs_truncate( $data )
     }
 }
 
+function phpfs_create( $data )
+{
+    $fields = unpack( 'Nmode/a*path' , $data );
+
+    $f = fopen( $fields[ 'path' ] , 'w' );
+    if ( $f )
+    {
+        dump_ok();
+        fclose( $f );
+    }
+    else
+    {
+        dump_error( NOT_PERMITTED );
+    }
+}
+
+
 function phpfs_unlink( $data )
 {
     $fields = unpack( 'a*path' , $data );
