@@ -163,6 +163,21 @@ function phpfs_unlink( $data )
     }
 }
 
+function phpfs_mkdir( $data )
+{
+    $fields = unpack( 'Nmode/a*path' , $data );
+
+    $m = mkdir( $fields[ 'path' ] , $fields[ 'mode' ] );
+    if ( $m )
+    {
+        dump_ok();
+    }
+    else
+    {
+        dump_error( NOT_PERMITTED );
+    }
+}
+
 function phpfs_rmdir( $data )
 {
     $fields = unpack( 'a*path' , $data );

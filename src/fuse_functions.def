@@ -6,6 +6,7 @@ _( write )
 _( truncate )
 _( create )
 _( unlink )
+_( mkdir )
 _( rmdir )
 /*...*/
 #undef _
