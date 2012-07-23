@@ -6,7 +6,6 @@ int phpfs_read( const char *path ,
                 off_t offset ,
                 struct fuse_file_info *fi )
 {
-    struct raw_data raw_data = { 0 };
     struct
     {
         uint32_t size;
@@ -15,7 +14,7 @@ int phpfs_read( const char *path ,
     header = { htonl( size ) ,
                htonl( offset ) };
 
-    PHPFS_DO_REQUEST( PHPFS_OPCODE_read )
+    PHPFS_DO_REQUEST_WITH_HEADER( PHPFS_OPCODE_read )
     {
         PHPFS_CHECK_RESPONSE_STATUS;
 

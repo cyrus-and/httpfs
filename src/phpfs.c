@@ -36,18 +36,39 @@ int phpfs_fuse_start( struct phpfs *phpfs ,
     return fuse_main( argc , argv , &operations , phpfs );
 }
 
-void phpfs_allocate_request( struct raw_data *in ,
-                             uint8_t op ,
-                             size_t header_length ,
-                             const char *path ,
-                             size_t data_length )
+void phpfs_prepare_request( struct raw_data *in ,
+                            uint8_t opcode ,
+                            struct raw_data *header ,
+                            const char *path ,
+                            struct raw_data *data )
 {
-    size_t path_length;
+    size_t offset , header_size , path_length , data_size;
 
-    /* produce OP<-- header_length -->path\0<-- data_length --> */
+    header_size = ( header ? header->size : 0 );
     path_length = strlen( path ) + 1;
-    in->size = 1 + header_length + path_length + data_length;
+    data_size = ( data ? data->size : 0 );
+
+    in->size = 1 + header_size + path_length + data_size;
     in->payload = malloc( in->size );
-    *in->payload = op;
-    memcpy( in->payload + 1 + header_length , path , path_length );
+
+    /* opcode */
+    *in->payload = opcode;
+
+    /* header */
+    offset = 1;
+    if ( header )
+    {
+        memcpy( in->payload + offset , header->payload , header->size );
+    }
+
+    /* path */
+    offset += header_size;
+    memcpy( in->payload + offset , path , path_length );
+
+    /* data */
+    if ( data )
+    {
+        offset += path_length;
+        memcpy( in->payload + offset , data->payload , data->size );
+    }
 }

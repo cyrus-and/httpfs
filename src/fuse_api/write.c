@@ -15,7 +15,7 @@ int phpfs_write( const char *path ,
     header = { htonl( size ) ,
                htonl( offset ) };
 
-    PHPFS_DO_REQUEST( PHPFS_OPCODE_write )
+    PHPFS_DO_REQUEST_WITH_HEADER_AND_DATA( PHPFS_OPCODE_write )
     {
         uint32_t write_size;
 

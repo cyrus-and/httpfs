@@ -47,28 +47,38 @@
 #define PHPFS( field ) \
     ( ( struct phpfs * )fuse_get_context()->private_data )->field
 
-/* convenience macro used implement a FUSE API function; 'response' is the data
-   received and it's available to the implementation; a structure named 'header'
-   must be filled with values to be passed to the PHP script before calling this
-   macro; a 'struct raw_data raw_data' must contains the additional data to pass
-   to the PHP, if there's no need initialize with ' = { 0 }'; this macro expects
-   a following block where the logic should be implemented */
-#define PHPFS_DO_REQUEST( op ) \
-    _PHPFS_DO_REQUEST( op , \
-    phpfs_allocate_request( &_in , op , sizeof( header ) , path , raw_data.size ); \
-    memcpy( _in.payload + 1 , &header , sizeof( header ) ); \
-    memcpy( _in.payload + _in.size - raw_data.size , raw_data.payload , raw_data.size ); )
-
-/* same as above but without header and additional data */
+/* convenience macros used to implement the FUSE API functions; 'response' is
+   the data received and it's available to the implementation; a structure named
+   'header' may be filled with values to be passed to the PHP script before
+   calling this macros; a 'struct raw_data raw_data' may contains the additional
+   data to pass to the PHP script; this macros expect a following block where
+   the logic should be implemented */
 #define PHPFS_DO_SIMPLE_REQUEST( op ) \
     _PHPFS_DO_REQUEST( op , \
-    phpfs_allocate_request( &_in , op , 0 , path , 0 ); )
+    phpfs_prepare_request( &_in , op , NULL , path , NULL ); )
+
+#define PHPFS_DO_REQUEST_WITH_HEADER( op ) \
+    _PHPFS_DO_REQUEST( op , \
+    _header_data.payload = ( char * )&header; \
+    _header_data.size = sizeof( header ); \
+    phpfs_prepare_request( &_in , op , &_header_data , path , NULL ); )
+
+#define PHPFS_DO_REQUEST_WITH_DATA( op ) \
+    _PHPFS_DO_REQUEST( op , \
+    phpfs_prepare_request( &_in , op , NULL , path , &raw_data ); )
+
+#define PHPFS_DO_REQUEST_WITH_HEADER_AND_DATA( op ) \
+    _PHPFS_DO_REQUEST( op , \
+    _header_data.payload = ( char * )&header; \
+    _header_data.size = sizeof( header ); \
+    phpfs_prepare_request( &_in , op , &_header_data , path , &raw_data ); )
 
 /* common */
 #define _PHPFS_DO_REQUEST( op , prepare_header ) \
     LOGF( "SEND REQUEST: %s (%i)" , \
           PHPFS_OPCODE_NAMES[ op ] , op ); \
-    struct raw_data _in = { 0 } , _out = { 0 } , response = { 0 }; \
+    struct raw_data _in = { 0 } , _out = { 0 } , _header_data = { 0 }; \
+    struct raw_data response = { 0 }; \
     prepare_header \
     if ( CURLE_OK != phpfs_do_post( &_in , &_out ) ) { \
         LOG( "SEND REQUEST: failed" ); \
@@ -117,10 +127,10 @@ extern const char *PHPFS_STATUS_NAMES[];
 int phpfs_fuse_start( struct phpfs *phpfs ,
                       char *mount_point );
 
-void phpfs_allocate_request( struct raw_data *in ,
-                             uint8_t op ,
-                             size_t header_length ,
-                             const char *path ,
-                             size_t data_length );
+void phpfs_prepare_request( struct raw_data *in ,
+                            uint8_t opcode ,
+                            struct raw_data *header ,
+                            const char *path ,
+                            struct raw_data *data );
 
 #endif
