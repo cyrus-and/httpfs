@@ -5,16 +5,18 @@
 
   Request format:
 
-  +--------+--------+------+
-  | opcode | fields | path |
-  +--------+--------+------+
+  +--------+--------+------+------+
+  | opcode | fields | path | data |
+  +--------+--------+------+------+
 
   - opcode: 1 byte that identifies the requested operation (see "operation code"
             enum)
 
   - fields: arbitrarily long (even 0) packed data in big endian byte order
 
-  - path: absolute Unix-like path
+  - path: absolute Unix-like path ('\0' terminated string)
+
+  - data: arbitrarily long (even 0) raw data
 
   Response format:
 
@@ -46,19 +48,21 @@
     ( ( struct phpfs * )fuse_get_context()->private_data )->field
 
 /* convenience macro used implement a FUSE API function; 'response' is the data
-   received and it's available to the implementation; a structure named header
+   received and it's available to the implementation; a structure named 'header'
    must be filled with values to be passed to the PHP script before calling this
-   macro; this macro expects a following block where the logic should be
-   implemented */
+   macro; a 'struct raw_data raw_data' must contains the additional data to pass
+   to the PHP, if there's no need initialize with ' = { 0 }'; this macro expects
+   a following block where the logic should be implemented */
 #define PHPFS_DO_REQUEST( op ) \
     _PHPFS_DO_REQUEST( op , \
-    phpfs_allocate_request( &_in , op , sizeof( header ) , path ); \
-    memcpy( _in.payload + 1 , &header , sizeof( header ) ); )
+    phpfs_allocate_request( &_in , op , sizeof( header ) , path , raw_data.size ); \
+    memcpy( _in.payload + 1 , &header , sizeof( header ) ); \
+    memcpy( _in.payload + _in.size - raw_data.size , raw_data.payload , raw_data.size ); )
 
-/* same as above but without header */
+/* same as above but without header and additional data */
 #define PHPFS_DO_SIMPLE_REQUEST( op ) \
     _PHPFS_DO_REQUEST( op , \
-    phpfs_allocate_request( &_in , op , 0 , path ); )
+    phpfs_allocate_request( &_in , op , 0 , path , 0 ); )
 
 /* common */
 #define _PHPFS_DO_REQUEST( op , prepare_header ) \
@@ -116,6 +120,7 @@ int phpfs_fuse_start( struct phpfs *phpfs ,
 void phpfs_allocate_request( struct raw_data *in ,
                              uint8_t op ,
                              size_t header_length ,
-                             const char *path );
+                             const char *path ,
+                             size_t data_length );
 
 #endif
