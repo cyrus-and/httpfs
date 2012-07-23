@@ -111,7 +111,7 @@ enum {
 extern const char *PHPFS_STATUS_NAMES[];
 
 int phpfs_fuse_start( struct phpfs *phpfs ,
-                      char *mounting_point );
+                      char *mount_point );
 
 void phpfs_allocate_request( struct raw_data *in ,
                              uint8_t op ,

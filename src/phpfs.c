@@ -15,7 +15,7 @@ const char *PHPFS_STATUS_NAMES[] = {
 };
 
 int phpfs_fuse_start( struct phpfs *phpfs ,
-                      char *mounting_point )
+                      char *mount_point )
 {
     int argc;
     char *argv[ 4 ];
@@ -31,7 +31,7 @@ int phpfs_fuse_start( struct phpfs *phpfs ,
 #ifndef NDEBUG
     argv[ argc++ ] = "-d"; /* debug and core dump */
 #endif
-    argv[ argc++ ] = mounting_point;
+    argv[ argc++ ] = mount_point;
 
     return fuse_main( argc , argv , &operations , phpfs );
 }
