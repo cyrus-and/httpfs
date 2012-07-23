@@ -1,6 +1,9 @@
 _( getattr )
 _( readdir )
+_( open )
 _( read )
+_( write )
+_( truncate )
 _( unlink )
 _( rmdir )
 /*...*/

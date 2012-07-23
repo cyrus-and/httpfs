@@ -91,6 +91,45 @@ function phpfs_read( $data )
     }
 }
 
+function phpfs_write( $data )
+{
+    $fields = unpack( 'Nsize/Noffset' , $data );
+    list( $path , $write_data ) = explode ( "\x00" , substr( $data , 8 ) , 2 );
+    check_file_exists( $path );
+
+    $f = fopen( $path , 'a' );
+    if ( $f )
+    {
+        dump_ok();
+        fseek( $f , $fields[ 'offset' ] );
+        $write_size = fwrite( $f , $write_data , $fields[ 'size' ] );
+        fclose( $f );
+        echo pack( 'N' , $write_size );
+    }
+    else
+    {
+        dump_error( NOT_PERMITTED );
+    }
+}
+
+function phpfs_truncate( $data )
+{
+    $fields = unpack( 'Noffset/a*path' , $data );
+    check_file_exists( $fields[ 'path' ] );
+
+    $f = fopen( $fields[ 'path' ] , 'r+' );
+    if ( $f )
+    {
+        dump_ok();
+        ftruncate( $f , $fields[ 'offset' ] );
+        fclose( $f );
+    }
+    else
+    {
+        dump_error( NOT_PERMITTED );
+    }
+}
+
 function phpfs_unlink( $data )
 {
     $fields = unpack( 'a*path' , $data );
