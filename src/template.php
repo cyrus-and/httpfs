@@ -91,6 +91,23 @@ function phpfs_read( $data )
     }
 }
 
+function phpfs_unlink( $data )
+{
+    $fields = unpack( 'a*path' , $data );
+    check_file_exists( $fields[ 'path' ] );
+
+    $u = unlink( $fields[ 'path' ] );
+    if ( $u )
+    {
+        dump_ok();
+    }
+    else
+    {
+        dump_error( NOT_PERMITTED );
+    }
+}
+
+
 /*...*/
 
 /* MAIN */
