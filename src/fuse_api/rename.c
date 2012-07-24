@@ -2,7 +2,7 @@
 
 int phpfs_rename( const char *path , const char *newpath)
 {
-    struct raw_data raw_data = { newpath, strlen(newpath) };
+    struct raw_data raw_data = { ( char * )newpath, strlen(newpath) };
 
     PHPFS_DO_REQUEST_WITH_DATA( PHPFS_OPCODE_rename )
     {
