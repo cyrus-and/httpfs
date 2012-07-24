@@ -6,7 +6,7 @@ int phpfs_write( const char *path ,
                  off_t offset ,
                  struct fuse_file_info *fi )
 {
-    struct raw_data raw_data = { buf , size };
+    struct raw_data raw_data = { ( char * )buf , size };
     struct
     {
         uint32_t size;
