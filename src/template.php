@@ -194,6 +194,20 @@ function phpfs_rmdir( $data )
     }
 }
 
+function phpfs_rename( $data )
+{
+    list( $path , $newpath ) = explode ( "\x00" , $data, 2 );
+    $r = rename( $path , $newpath );
+    if ( $r )
+    {
+        dump_ok();
+    }
+    else
+    {
+        dump_error( NOT_PERMITTED );
+    }
+}
+
 
 
 /*...*/

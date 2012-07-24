@@ -8,5 +8,6 @@ _( create )
 _( unlink )
 _( mkdir )
 _( rmdir )
+_( rename )
 /*...*/
 #undef _
