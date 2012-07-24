@@ -9,5 +9,6 @@ _( unlink )
 _( mkdir )
 _( rmdir )
 _( rename )
+_( link )
 /*...*/
 #undef _

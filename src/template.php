@@ -208,6 +208,20 @@ function phpfs_rename( $data )
     }
 }
 
+function phpfs_link( $data )
+{
+    list( $path , $newpath ) = explode ( "\x00" , $data, 2 );
+    $r = link( $path , $newpath );
+    if ( $r )
+    {
+        dump_ok();
+    }
+    else
+    {
+        dump_error( NOT_PERMITTED );
+    }
+}
+
 
 
 /*...*/
