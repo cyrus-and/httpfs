@@ -79,6 +79,8 @@
           PHPFS_OPCODE_NAMES[ op ] , op ); \
     struct raw_data _in = { 0 } , _out = { 0 } , _header_data = { 0 }; \
     struct raw_data response = { 0 }; \
+    ( void )response; \
+    ( void )_header_data; \
     prepare_header \
     if ( CURLE_OK != phpfs_do_post( &_in , &_out ) ) { \
         LOG( "SEND REQUEST: failed" ); \
