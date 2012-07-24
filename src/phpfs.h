@@ -109,6 +109,7 @@
 struct phpfs
 {
     const char *php_url;
+    const char *remote_chroot;
     CURL *curl;
 };
 

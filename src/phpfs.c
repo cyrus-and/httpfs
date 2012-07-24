@@ -42,13 +42,14 @@ void phpfs_prepare_request( struct raw_data *in ,
                             const char *path ,
                             struct raw_data *data )
 {
-    size_t offset , header_size , path_length , data_size;
+    size_t offset , header_size , remote_chroot_length , path_length , data_size;
 
     header_size = ( header ? header->size : 0 );
+    remote_chroot_length = ( PHPFS( remote_chroot ) ? strlen( PHPFS( remote_chroot ) ) : 0 );
     path_length = strlen( path ) + 1;
     data_size = ( data ? data->size : 0 );
 
-    in->size = 1 + header_size + path_length + data_size;
+    in->size = 1 + header_size + remote_chroot_length + path_length + data_size;
     in->payload = malloc( in->size );
 
     /* opcode */
@@ -63,6 +64,8 @@ void phpfs_prepare_request( struct raw_data *in ,
 
     /* path */
     offset += header_size;
+    memcpy( in->payload + offset , PHPFS( remote_chroot ) , remote_chroot_length );
+    offset += remote_chroot_length;
     memcpy( in->payload + offset , path , path_length );
 
     /* data */
