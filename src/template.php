@@ -70,7 +70,7 @@ function phpfs_readdir( $data )
     }
     else
     {
-        dump_error( NOT_PERMITTED );
+        dump_error( CANNOT_ACCESS );
     }
 }
 
@@ -88,7 +88,7 @@ function phpfs_read( $data )
     }
     else
     {
-        dump_error( NOT_PERMITTED );
+        dump_error( CANNOT_ACCESS );
     }
 }
 
@@ -108,7 +108,7 @@ function phpfs_write( $data )
     }
     else
     {
-        dump_error( NOT_PERMITTED );
+        dump_error( CANNOT_ACCESS );
     }
 }
 
@@ -125,7 +125,7 @@ function phpfs_truncate( $data )
     }
     else
     {
-        dump_error( NOT_PERMITTED );
+        dump_error( CANNOT_ACCESS );
     }
 }
 
@@ -141,7 +141,7 @@ function phpfs_create( $data )
     }
     else
     {
-        dump_error( NOT_PERMITTED );
+        dump_error( CANNOT_ACCESS );
     }
 }
 
@@ -157,7 +157,7 @@ function phpfs_unlink( $data )
     }
     else
     {
-        dump_error( NOT_PERMITTED );
+        dump_error( CANNOT_ACCESS );
     }
 }
 
@@ -172,7 +172,7 @@ function phpfs_mkdir( $data )
     }
     else
     {
-        dump_error( NOT_PERMITTED );
+        dump_error( CANNOT_ACCESS );
     }
 }
 
@@ -187,7 +187,7 @@ function phpfs_rmdir( $data )
     }
     else
     {
-        dump_error( NOT_PERMITTED );
+        dump_error( CANNOT_ACCESS );
     }
 }
 
@@ -201,7 +201,7 @@ function phpfs_rename( $data )
     }
     else
     {
-        dump_error( NOT_PERMITTED );
+        dump_error( CANNOT_ACCESS );
     }
 }
 
@@ -215,7 +215,7 @@ function phpfs_link( $data )
     }
     else
     {
-        dump_error( NOT_PERMITTED );
+        dump_error( CANNOT_ACCESS );
     }
 }
 
@@ -231,7 +231,7 @@ function phpfs_readlink( $data )
     }
     else
     {
-        dump_error( NOT_PERMITTED );
+        dump_error( CANNOT_ACCESS );
     }
 }
 
@@ -246,7 +246,7 @@ function phpfs_symlink( $data )
     }
     else
     {
-        dump_error( NOT_PERMITTED );
+        dump_error( CANNOT_ACCESS );
     }
 }
 
