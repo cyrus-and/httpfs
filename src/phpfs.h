@@ -97,7 +97,7 @@
     response.size = _out.size - 1; \
     switch ( *_out.payload ) { \
     case PHPFS_STATUS_ENTRY_NOT_FOUND: PHPFS_CLEANUP; return -ENOENT; \
-    case PHPFS_STATUS_NOT_PERMITTED: PHPFS_CLEANUP; return -EPERM; \
+    case PHPFS_STATUS_NOT_PERMITTED: PHPFS_CLEANUP; return -EACCES; \
     }
 
 /* to be called before return in FUSE API functions */
