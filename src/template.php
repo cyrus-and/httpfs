@@ -21,7 +21,7 @@ function dump_error( $error , $custom_error_message = null )
     global $error_message;
     printf( '%c' , $error );
     $message = $custom_error_message ? $custom_error_message : $error_message;
-    if ( $message ) printf( "$message%c" , 0 );
+    if ( $message ) echo "$message\x00";
 }
 
 /* FUSE API */
@@ -65,7 +65,7 @@ function phpfs_readdir( $data )
         dump_ok();
         foreach ( $d as $entry )
         {
-            printf( "$entry%c" , 0 );
+            echo "$entry\x00";
         }
     }
     else
