@@ -24,21 +24,11 @@ function dump_error( $error , $custom_error_message = null )
     if ( $message ) printf( "$message%c" , 0 );
 }
 
-function check_file_exists( $path )
-{
-    if ( !file_exists( $path ) )
-    {
-        dump_error( ENTRY_NOT_FOUND );
-        exit;
-    }
-}
-
 /* FUSE API */
 
 function phpfs_getattr( $data )
 {
     $fields = unpack( 'a*path' , $data );
-    check_file_exists( $fields[ 'path' ] );
 
     $s = lstat( $fields[ 'path' ] );
     if ( $s )
@@ -48,14 +38,13 @@ function phpfs_getattr( $data )
     }
     else
     {
-        dump_error( NOT_PERMITTED );
+        dump_error( ENTRY_NOT_FOUND );
     }
 }
 
 function phpfs_readdir( $data )
 {
     $fields = unpack( 'a*path' , $data );
-    check_file_exists( $fields[ 'path' ] );
 
     $d = scandir( $fields[ 'path' ] );
     if ( $d )
@@ -75,7 +64,6 @@ function phpfs_readdir( $data )
 function phpfs_read( $data )
 {
     $fields = unpack( 'Nsize/Noffset/a*path' , $data );
-    check_file_exists( $fields[ 'path' ] );
 
     $f = fopen( $fields[ 'path' ] , 'r' );
     if ( $f )
@@ -95,7 +83,6 @@ function phpfs_write( $data )
 {
     $fields = unpack( 'Nsize/Noffset' , $data );
     list( $path , $write_data ) = explode ( "\x00" , substr( $data , 8 ) , 2 );
-    check_file_exists( $path );
 
     $f = fopen( $path , 'a' );
     if ( $f )
@@ -115,7 +102,6 @@ function phpfs_write( $data )
 function phpfs_truncate( $data )
 {
     $fields = unpack( 'Noffset/a*path' , $data );
-    check_file_exists( $fields[ 'path' ] );
 
     $f = fopen( $fields[ 'path' ] , 'r+' );
     if ( $f )
@@ -150,7 +136,6 @@ function phpfs_create( $data )
 function phpfs_unlink( $data )
 {
     $fields = unpack( 'a*path' , $data );
-    check_file_exists( $fields[ 'path' ] );
 
     $u = unlink( $fields[ 'path' ] );
     if ( $u )
@@ -181,7 +166,6 @@ function phpfs_mkdir( $data )
 function phpfs_rmdir( $data )
 {
     $fields = unpack( 'a*path' , $data );
-    check_file_exists( $fields[ 'path' ] );
 
     $u = rmdir( $fields[ 'path' ] );
     if ( $u )
@@ -225,7 +209,6 @@ function phpfs_link( $data )
 function phpfs_readlink( $data )
 {
     $fields = unpack( 'a*path' , $data );
-    check_file_exists( $fields[ 'path' ] );
 
     $r = readlink( $fields[ 'path' ] );
     if ( $r )
