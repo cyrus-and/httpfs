@@ -40,7 +40,7 @@ function phpfs_getattr( $data )
     $fields = unpack( 'a*path' , $data );
     check_file_exists( $fields[ 'path' ] );
 
-    $s = stat( $fields[ 'path' ] );
+    $s = lstat( $fields[ 'path' ] );
     if ( $s )
     {
         dump_ok();
