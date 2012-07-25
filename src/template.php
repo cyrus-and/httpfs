@@ -34,7 +34,20 @@ function phpfs_getattr( $data )
     if ( $s )
     {
         dump_ok();
-        echo pack( 'NNN' , $s[ 'mode' ] , $s[ 'nlink' ] , $s[ 'size' ] );
+        echo pack( 'NNNNNNNNNNNNN' ,
+                   $s[ 'dev' ] ,
+                   $s[ 'ino' ] ,
+                   $s[ 'mode' ] ,
+                   $s[ 'nlink' ] ,
+                   $s[ 'uid' ] ,
+                   $s[ 'gid' ] ,
+                   $s[ 'rdev' ] ,
+                   $s[ 'size' ] ,
+                   $s[ 'atime' ] ,
+                   $s[ 'mtime' ] ,
+                   $s[ 'ctime' ] ,
+                   $s[ 'blksize' ] ,
+                   $s[ 'blocks' ] );
     }
     else
     {
