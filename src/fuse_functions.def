@@ -11,5 +11,6 @@ _( rmdir )
 _( rename )
 _( link )
 _( readlink )
+_( symlink )
 /*...*/
 #undef _

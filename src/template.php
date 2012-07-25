@@ -239,6 +239,21 @@ function phpfs_readlink( $data )
     }
 }
 
+function phpfs_symlink( $data )
+{
+    list( $path , $newpath ) = explode ( "\x00" , $data , 2 );
+
+    $s = symlink( $path , $newpath );
+    if ( $s )
+    {
+        dump_ok();
+    }
+    else
+    {
+        dump_error( NOT_PERMITTED );
+    }
+}
+
 /*...*/
 
 /* MAIN */
