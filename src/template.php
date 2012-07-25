@@ -222,7 +222,22 @@ function phpfs_link( $data )
     }
 }
 
+function phpfs_readlink( $data )
+{
+    $fields = unpack( 'a*path' , $data );
+    check_file_exists( $fields[ 'path' ] );
 
+    $r = readlink( $fields[ 'path' ] );
+    if ( $r )
+    {
+        dump_ok();
+        echo $r;
+    }
+    else
+    {
+        dump_error( NOT_PERMITTED );
+    }
+}
 
 /*...*/
 

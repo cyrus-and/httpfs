@@ -10,5 +10,6 @@ _( mkdir )
 _( rmdir )
 _( rename )
 _( link )
+_( readlink )
 /*...*/
 #undef _
