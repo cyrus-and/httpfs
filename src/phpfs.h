@@ -86,21 +86,25 @@
 
 /* check the response status and return if an error is occurred */
 #define PHPFS_CHECK_RESPONSE_STATUS \
-    LOGF( "RESPONSE: %s (%i) %s" , \
-          PHPFS_STATUS_NAMES[ ( int )*_out.payload ] , *_out.payload , \
-          *_out.payload && _out.size > 1 ? _out.payload + 1 : "" ); \
     response.payload = _out.payload + 1; \
     response.size = _out.size - 1; \
     switch ( *_out.payload ) { \
     _PHPFS_CHECK_HANDLE_ERROR( ENTRY_NOT_FOUND , ENOENT ) \
     _PHPFS_CHECK_HANDLE_ERROR( CANNOT_ACCESS , EACCES ) \
     _PHPFS_CHECK_HANDLE_ERROR( NOT_PERMITTED , EPERM ) \
-    case 0: break; \
+    case 0: _PHPFS_DUMP_STATUS; break; \
     default: PHPFS_CLEANUP; return -EBADMSG; \
     }
 
 #define _PHPFS_CHECK_HANDLE_ERROR( status , errno ) \
-    case PHPFS_STATUS_##status: PHPFS_CLEANUP; return -errno;
+    case PHPFS_STATUS_##status: \
+    _PHPFS_DUMP_STATUS; PHPFS_CLEANUP; \
+    return -errno;
+
+#define _PHPFS_DUMP_STATUS \
+    LOGF( "RESPONSE: %s (%i) %s" , \
+          PHPFS_STATUS_NAMES[ ( int )*_out.payload ] , *_out.payload , \
+          *_out.payload && _out.size > 1 ? _out.payload + 1 : "" )
 
 /* to be called before return in FUSE API functions */
 #define PHPFS_CLEANUP \
