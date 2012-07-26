@@ -9,34 +9,21 @@ Info:
     location on a local machine, relying on a generated PHP script installed on
     the remote machine.
 
-Dependencies:
-
-    fuse
-    libfuse-dev
-    libcurl4-openssl-dev
-    cmake
-
 Install:
 
-    $ make
-    # make install
+    1. Resolve dependencies and add current user to the fuse group as described in  
+       the "Prepare enviroinment" paragraph.
 
-Uninstall:
+    2. Install:
 
-    # make uninstall
+	    $ make
+	    # make install
+
+    3. If needed, uninstall:
+
+	    # make uninstall
 
 Sample usage:
-
-    0. Make sure the current user is in the fuse group (this preliminary step is
-       mandatory to use any FUSE filesystem):
-
-           # adduser john fuse
-
-       Then log out and back in or start a new shell with:
-
-           $ newgrp fuse
-
-       to inform the system about the changes.
 
     1. Generate the PHP script:
 
@@ -56,3 +43,25 @@ Sample usage:
     5. Unmount the filesystem:
 
            $ fusermount -u /tmp/phpfs/
+
+Prepare the enviroinment:
+
+    1. Install dependencies
+
+	    fuse
+	    libfuse-dev
+	    libcurl4-openssl-dev
+	    cmake
+
+    2. Make sure the current user is in the fuse group (this preliminary step is
+       mandatory to use any FUSE filesystem):
+
+           # adduser john fuse
+
+       Then log out and back in or start a new shell with:
+
+           $ newgrp fuse
+
+       to inform the system about the changes.
+
+
