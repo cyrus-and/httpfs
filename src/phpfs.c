@@ -45,7 +45,7 @@ void phpfs_prepare_request( struct raw_data *in ,
     size_t offset , header_size , remote_chroot_length , path_length , data_size;
 
     header_size = ( header ? header->size : 0 );
-    remote_chroot_length = ( PHPFS( remote_chroot ) ? strlen( PHPFS( remote_chroot ) ) : 0 );
+    remote_chroot_length = ( phpfs.remote_chroot ? strlen( phpfs.remote_chroot ) : 0 );
     path_length = strlen( path ) + 1;
     data_size = ( data ? data->size : 0 );
 
@@ -64,7 +64,7 @@ void phpfs_prepare_request( struct raw_data *in ,
 
     /* path */
     offset += header_size;
-    memcpy( in->payload + offset , PHPFS( remote_chroot ) , remote_chroot_length );
+    memcpy( in->payload + offset , phpfs.remote_chroot , remote_chroot_length );
     offset += remote_chroot_length;
     memcpy( in->payload + offset , path , path_length );
 

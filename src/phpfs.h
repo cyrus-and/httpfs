@@ -43,10 +43,6 @@
 #include "debug.h"
 #include "net.h"
 
-/* access to the global context */
-#define PHPFS( field ) \
-    ( ( struct phpfs * )fuse_get_context()->private_data )->field
-
 /* convenience macros used to implement the FUSE API functions; 'response' is
    the data received and it's available to the implementation; a structure named
    'header' may be filled with values to be passed to the PHP script before
@@ -112,12 +108,13 @@
     free( _out.payload )
 
 /* global context */
-struct phpfs
+extern struct phpfs
 {
     const char *php_url;
     const char *remote_chroot;
     CURL *curl;
-};
+}
+phpfs;
 
 /* operation codes */
 #define _( x ) PHPFS_OPCODE_##x ,

@@ -27,8 +27,8 @@ CURLcode phpfs_do_post( const struct raw_data *in ,
     out->payload = malloc( 1 );
     out->size = 0;
 
-    curl = PHPFS( curl );
-    curl_easy_setopt( curl , CURLOPT_URL , PHPFS( php_url ) );
+    curl = phpfs.curl;
+    curl_easy_setopt( curl , CURLOPT_URL , phpfs.php_url );
     curl_easy_setopt( curl , CURLOPT_POSTFIELDS , in->payload );
     curl_easy_setopt( curl , CURLOPT_POSTFIELDSIZE , in->size );
     curl_easy_setopt( curl , CURLOPT_WRITEFUNCTION , retrieve_chunk );
