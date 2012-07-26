@@ -96,10 +96,13 @@
     response.payload = _out.payload + 1; \
     response.size = _out.size - 1; \
     switch ( *_out.payload ) { \
-    case PHPFS_STATUS_ENTRY_NOT_FOUND: PHPFS_CLEANUP; return -ENOENT; \
-    case PHPFS_STATUS_CANNOT_ACCESS: PHPFS_CLEANUP; return -EACCES; \
-    case PHPFS_STATUS_NOT_PERMITTED: PHPFS_CLEANUP; return -EPERM; \
+    _PHPFS_CHECK_HANDLE_ERROR( ENTRY_NOT_FOUND , ENOENT ) \
+    _PHPFS_CHECK_HANDLE_ERROR( CANNOT_ACCESS , EACCES ) \
+    _PHPFS_CHECK_HANDLE_ERROR( NOT_PERMITTED , EPERM ) \
     }
+
+#define _PHPFS_CHECK_HANDLE_ERROR( status , errno ) \
+    case PHPFS_STATUS_##status: PHPFS_CLEANUP; return -errno;
 
 /* to be called before return in FUSE API functions */
 #define PHPFS_CLEANUP \
