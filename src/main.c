@@ -1,6 +1,7 @@
 #include <stdlib.h>
 #include "generator.h"
 #include "phpfs.h"
+#include "fuse_api/fuse_api.h"
 
 struct phpfs phpfs;
 
@@ -11,6 +12,33 @@ static void usage()
              "    phpfs generate\n"
              "    phpfs mount <url> <mount_point> [<remote_chroot>]\n" );
     exit( EXIT_FAILURE );
+}
+
+static void check_remote_availability()
+{
+    struct stat ss;
+    int errno;
+
+    if ( errno = -phpfs_getattr( "/" , &ss ) , errno )
+    {
+        fprintf( stderr , "Unable to mount: " );
+
+        switch ( errno )
+        {
+        case ECOMM:
+            fprintf( stderr , "cannot reach the remote server\n" );
+            break;
+
+        case ENOENT:
+            fprintf( stderr , "cannot find the remote path\n" );
+            break;
+
+        default:
+            fprintf( stderr , "errno (%i) %s\n" , errno , sys_errlist[ errno ]);
+        }
+
+        exit( EXIT_FAILURE );
+    }
 }
 
 int main( int argc , char *argv[] )
@@ -38,6 +66,7 @@ int main( int argc , char *argv[] )
             return EXIT_FAILURE;
         }
 
+        check_remote_availability();
         return phpfs_fuse_start( &phpfs , argv[ 3 ] );
     }
     else usage();
