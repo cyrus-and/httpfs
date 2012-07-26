@@ -29,3 +29,5 @@ add_custom_target(
   COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/../test/test-local.sh
   DEPENDS phpfs
 )
+
+install( PROGRAMS ${CMAKE_CURRENT_BINARY_DIR}/phpfs DESTINATION bin )
