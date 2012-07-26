@@ -250,6 +250,21 @@ function phpfs_symlink( $data )
     }
 }
 
+function phpfs_chmod( $data )
+{
+    $fields = unpack( 'Nmode/a*path' , $data );
+
+    $c = chmod( $fields[ 'path' ] , $fields[ 'mode' ] );
+    if ( $c )
+    {
+        dump_ok();
+    }
+    else
+    {
+        dump_error( NOT_PERMITTED );
+    }
+}
+
 /*...*/
 
 /* MAIN */

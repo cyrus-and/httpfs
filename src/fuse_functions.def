@@ -12,5 +12,6 @@ _( rename )
 _( link )
 _( readlink )
 _( symlink )
+_( chmod )
 /*...*/
 #undef _
