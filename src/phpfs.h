@@ -99,6 +99,8 @@
     _PHPFS_CHECK_HANDLE_ERROR( ENTRY_NOT_FOUND , ENOENT ) \
     _PHPFS_CHECK_HANDLE_ERROR( CANNOT_ACCESS , EACCES ) \
     _PHPFS_CHECK_HANDLE_ERROR( NOT_PERMITTED , EPERM ) \
+    case 0: break; \
+    default: PHPFS_CLEANUP; return -EBADMSG; \
     }
 
 #define _PHPFS_CHECK_HANDLE_ERROR( status , errno ) \
