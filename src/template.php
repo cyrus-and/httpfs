@@ -265,6 +265,33 @@ function phpfs_chmod( $data )
     }
 }
 
+function phpfs_chown( $data )
+{
+    $fields = unpack( 'Nuid/Ngid/a*path' , $data );
+
+
+    if ($fields['uid'] != 0xffffffff)
+    {
+	$u = chown($fields['path'],$fields['uid']);
+	$g = TRUE;
+    }
+
+    if ($fields['gid'] != 0xffffffff)
+    {
+	$g = chgrp($fields['path'],$fields['gid']);
+	$u = TRUE;
+    }
+
+    if ( $u && $g )
+    {
+        dump_ok();
+    }
+    else
+    {
+        dump_error( NOT_PERMITTED );
+    }
+}
+
 /*...*/
 
 /* MAIN */

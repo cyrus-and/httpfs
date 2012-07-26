@@ -13,5 +13,6 @@ _( link )
 _( readlink )
 _( symlink )
 _( chmod )
+_( chown )
 /*...*/
 #undef _
