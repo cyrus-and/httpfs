@@ -8,6 +8,7 @@ echo '>>> Generating PHP file'
 echo '>>> Starting web server on http://localhost:8000'
 php -S localhost:8000 -t ./www/ &>> php.log &
 PHP=$!
+sleep 1
 echo '>>> Mounting filesystem'
 ./httpfs mount http://localhost:8000/httpfs.php /tmp/httpfs/ &>> ./httpfs.log &
 HTTPFS=$!
