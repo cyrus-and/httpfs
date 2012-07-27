@@ -1,13 +1,11 @@
-#include "../phpfs.h"
+#include "../httpfs.h"
 
-int phpfs_rmdir( const char *path )
+int httpfs_rmdir( const char *path )
 {
-    PHPFS_DO_SIMPLE_REQUEST( PHPFS_OPCODE_rmdir )
+    HTTPFS_DO_SIMPLE_REQUEST( HTTPFS_OPCODE_rmdir )
     {
-
-        PHPFS_CHECK_RESPONSE_STATUS;
-
-        PHPFS_CLEANUP;
+        HTTPFS_CHECK_RESPONSE_STATUS;
+        HTTPFS_CLEANUP;
         return 0;
     }
 }

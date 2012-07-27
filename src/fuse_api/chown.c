@@ -1,10 +1,9 @@
-#include "../phpfs.h"
+#include "../httpfs.h"
 
-int phpfs_chown( const char *path ,
-                uid_t uid ,
-                gid_t gid )
+int httpfs_chown( const char *path ,
+                  uid_t uid ,
+                  gid_t gid )
 {
-
     struct
     {
         uint32_t uid;
@@ -13,11 +12,10 @@ int phpfs_chown( const char *path ,
     header = { htonl( uid ) ,
                htonl( gid ) };
 
-    PHPFS_DO_REQUEST_WITH_HEADER( PHPFS_OPCODE_chown )
+    HTTPFS_DO_REQUEST_WITH_HEADER( HTTPFS_OPCODE_chown )
     {
-        PHPFS_CHECK_RESPONSE_STATUS;
-
-        PHPFS_CLEANUP;
+        HTTPFS_CHECK_RESPONSE_STATUS;
+        HTTPFS_CLEANUP;
         return 0;
     }
 }

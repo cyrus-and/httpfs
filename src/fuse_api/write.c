@@ -1,10 +1,10 @@
-#include "../phpfs.h"
+#include "../httpfs.h"
 
-int phpfs_write( const char *path ,
-                 const char *buf ,
-                 size_t size ,
-                 off_t offset ,
-                 struct fuse_file_info *fi )
+int httpfs_write( const char *path ,
+                  const char *buf ,
+                  size_t size ,
+                  off_t offset ,
+                  struct fuse_file_info *fi )
 {
     struct raw_data raw_data = { ( char * )buf , size };
     struct
@@ -15,13 +15,13 @@ int phpfs_write( const char *path ,
     header = { htonl( size ) ,
                htonl( offset ) };
 
-    PHPFS_DO_REQUEST_WITH_HEADER_AND_DATA( PHPFS_OPCODE_write )
+    HTTPFS_DO_REQUEST_WITH_HEADER_AND_DATA( HTTPFS_OPCODE_write )
     {
         uint32_t write_size;
 
-        PHPFS_CHECK_RESPONSE_STATUS;
+        HTTPFS_CHECK_RESPONSE_STATUS;
         write_size = ntohl( *( uint32_t * )response.payload );
-        PHPFS_CLEANUP;
+        HTTPFS_CLEANUP;
         return write_size;
     }
 }

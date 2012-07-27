@@ -1,5 +1,5 @@
-#ifndef _PHPFS_NET_H
-#define _PHPFS_NET_H
+#ifndef _HTTPFS_NET_H
+#define _HTTPFS_NET_H
 
 #include <curl/curl.h>
 
@@ -9,7 +9,7 @@ struct raw_data
     size_t size;
 };
 
-CURLcode phpfs_do_post( const struct raw_data *in ,
-                        struct raw_data *out );
+CURLcode httpfs_do_post( const struct raw_data *in ,
+                         struct raw_data *out );
 
 #endif

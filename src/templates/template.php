@@ -26,7 +26,7 @@ function dump_error( $error , $custom_error_message = null )
 
 /* FUSE API */
 
-function phpfs_getattr( $data )
+function httpfs_getattr( $data )
 {
     $fields = unpack( 'a*path' , $data );
 
@@ -55,7 +55,7 @@ function phpfs_getattr( $data )
     }
 }
 
-function phpfs_readdir( $data )
+function httpfs_readdir( $data )
 {
     $fields = unpack( 'a*path' , $data );
 
@@ -74,7 +74,7 @@ function phpfs_readdir( $data )
     }
 }
 
-function phpfs_read( $data )
+function httpfs_read( $data )
 {
     $fields = unpack( 'Nsize/Noffset/a*path' , $data );
 
@@ -92,7 +92,7 @@ function phpfs_read( $data )
     }
 }
 
-function phpfs_write( $data )
+function httpfs_write( $data )
 {
     $fields = unpack( 'Nsize/Noffset' , $data );
     list( $path , $write_data ) = explode ( "\x00" , substr( $data , 8 ) , 2 );
@@ -112,7 +112,7 @@ function phpfs_write( $data )
     }
 }
 
-function phpfs_truncate( $data )
+function httpfs_truncate( $data )
 {
     $fields = unpack( 'Noffset/a*path' , $data );
 
@@ -129,7 +129,7 @@ function phpfs_truncate( $data )
     }
 }
 
-function phpfs_create( $data )
+function httpfs_create( $data )
 {
     $fields = unpack( 'Nmode/a*path' , $data );
 
@@ -146,7 +146,7 @@ function phpfs_create( $data )
 }
 
 
-function phpfs_unlink( $data )
+function httpfs_unlink( $data )
 {
     $fields = unpack( 'a*path' , $data );
 
@@ -161,7 +161,7 @@ function phpfs_unlink( $data )
     }
 }
 
-function phpfs_mkdir( $data )
+function httpfs_mkdir( $data )
 {
     $fields = unpack( 'Nmode/a*path' , $data );
 
@@ -176,7 +176,7 @@ function phpfs_mkdir( $data )
     }
 }
 
-function phpfs_rmdir( $data )
+function httpfs_rmdir( $data )
 {
     $fields = unpack( 'a*path' , $data );
 
@@ -191,7 +191,7 @@ function phpfs_rmdir( $data )
     }
 }
 
-function phpfs_rename( $data )
+function httpfs_rename( $data )
 {
     list( $path , $newpath ) = explode ( "\x00" , $data, 2 );
     $r = rename( $path , $newpath );
@@ -205,7 +205,7 @@ function phpfs_rename( $data )
     }
 }
 
-function phpfs_link( $data )
+function httpfs_link( $data )
 {
     list( $path , $newpath ) = explode ( "\x00" , $data, 2 );
     $r = link( $path , $newpath );
@@ -219,7 +219,7 @@ function phpfs_link( $data )
     }
 }
 
-function phpfs_readlink( $data )
+function httpfs_readlink( $data )
 {
     $fields = unpack( 'a*path' , $data );
 
@@ -235,7 +235,7 @@ function phpfs_readlink( $data )
     }
 }
 
-function phpfs_symlink( $data )
+function httpfs_symlink( $data )
 {
     list( $path , $newpath ) = explode ( "\x00" , $data , 2 );
 
@@ -250,7 +250,7 @@ function phpfs_symlink( $data )
     }
 }
 
-function phpfs_chmod( $data )
+function httpfs_chmod( $data )
 {
     $fields = unpack( 'Nmode/a*path' , $data );
 
@@ -265,7 +265,7 @@ function phpfs_chmod( $data )
     }
 }
 
-function phpfs_chown( $data )
+function httpfs_chown( $data )
 {
     $fields = unpack( 'Nuid/Ngid/a*path' , $data );
 
@@ -298,7 +298,7 @@ function phpfs_chown( $data )
 
 $post = file_get_contents( 'php://input' );
 $opcode = ord( $post );
-$function_name = $PHPFS_OPCODE_NAMES[ $opcode ];
+$function_name = $HTTPFS_OPCODE_NAMES[ $opcode ];
 $data = substr( $post , 1 );
 call_user_func( $function_name , $data );
 

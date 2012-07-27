@@ -1,10 +1,10 @@
-#include "../phpfs.h"
+#include "../httpfs.h"
 
-int phpfs_read( const char *path ,
-                char *buf ,
-                size_t size ,
-                off_t offset ,
-                struct fuse_file_info *fi )
+int httpfs_read( const char *path ,
+                 char *buf ,
+                 size_t size ,
+                 off_t offset ,
+                 struct fuse_file_info *fi )
 {
     struct
     {
@@ -14,14 +14,14 @@ int phpfs_read( const char *path ,
     header = { htonl( size ) ,
                htonl( offset ) };
 
-    PHPFS_DO_REQUEST_WITH_HEADER( PHPFS_OPCODE_read )
+    HTTPFS_DO_REQUEST_WITH_HEADER( HTTPFS_OPCODE_read )
     {
-        PHPFS_CHECK_RESPONSE_STATUS;
+        HTTPFS_CHECK_RESPONSE_STATUS;
 
         /* TODO check chunk size */
         memcpy( buf , response.payload , response.size );
 
-        PHPFS_CLEANUP;
+        HTTPFS_CLEANUP;
         return response.size;
     }
 }

@@ -1,7 +1,7 @@
-#include "../phpfs.h"
+#include "../httpfs.h"
 
-int phpfs_truncate( const char *path ,
-                    off_t offset )
+int httpfs_truncate( const char *path ,
+                     off_t offset )
 {
     struct
     {
@@ -9,10 +9,10 @@ int phpfs_truncate( const char *path ,
     }
     header = { htonl( offset ) };
 
-    PHPFS_DO_REQUEST_WITH_HEADER( PHPFS_OPCODE_truncate )
+    HTTPFS_DO_REQUEST_WITH_HEADER( HTTPFS_OPCODE_truncate )
     {
-        PHPFS_CHECK_RESPONSE_STATUS;
-        PHPFS_CLEANUP;
+        HTTPFS_CHECK_RESPONSE_STATUS;
+        HTTPFS_CLEANUP;
         return 0;
     }
 }

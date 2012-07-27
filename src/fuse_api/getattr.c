@@ -1,9 +1,9 @@
-#include "../phpfs.h"
+#include "../httpfs.h"
 
-int phpfs_getattr( const char *path ,
-                   struct stat *stbuf )
+int httpfs_getattr( const char *path ,
+                    struct stat *stbuf )
 {
-    PHPFS_DO_SIMPLE_REQUEST( PHPFS_OPCODE_getattr )
+    HTTPFS_DO_SIMPLE_REQUEST( HTTPFS_OPCODE_getattr )
     {
         struct attrs
         {
@@ -23,7 +23,7 @@ int phpfs_getattr( const char *path ,
         }
         attrs;
 
-        PHPFS_CHECK_RESPONSE_STATUS;
+        HTTPFS_CHECK_RESPONSE_STATUS;
 
         memset( stbuf , 0 , sizeof( struct stat ) );
         attrs = *( struct attrs * )response.payload;
@@ -41,7 +41,7 @@ int phpfs_getattr( const char *path ,
         stbuf->st_blksize = ntohl( attrs.blksize );
         stbuf->st_blocks = ntohl( attrs.blocks );
 
-        PHPFS_CLEANUP;
+        HTTPFS_CLEANUP;
         return 0;
     }
 }

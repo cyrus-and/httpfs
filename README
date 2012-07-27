@@ -1,18 +1,18 @@
-phpfs - Remote FUSE filesystem via PHP
+httpfs - Remote FUSE filesystem via server-side script
 Andrea Cardaci <cyrus.and@gmail.com>
 Emilio Pinna <emilio.pinn@gmail.com>
 --------------------------------------------------------------------------------
 
 Info:
 
-    phpfs is a FUSE-based filesystem that uses HTTP messages to mount a remote
-    location on a local machine, relying on a generated PHP script installed on
-    the remote machine.
+    httpfs is a FUSE-based filesystem that uses HTTP messages to mount a remote
+    location on a local machine, relying on a generated server-side script
+    installed on the server.
 
 Install:
 
-    1. Resolve dependencies and add current user to the fuse group as described in  
-       the "Prepare enviroinment" paragraph.
+    1. Resolve dependencies and add current user to the fuse group as described in
+       the "Prepare environment" paragraph.
 
     2. Install:
 
@@ -25,26 +25,26 @@ Install:
 
 Sample usage:
 
-    1. Generate the PHP script:
+    1. Generate a PHP script:
 
-           $ phpfs generate > phpfs.php
+           $ httpfs generate php > httpfs.php
 
     2. Place the generated script in an accessible location inside the document
        root of your web server.
 
     3. Mount the remote filesystem:
 
-           $ mkdir /tmp/phpfs/
-           $ phpfs mount http://target.com/phpfs.php /tmp/phpfs/ /home/john/
+           $ mkdir /tmp/httpfs/
+           $ httpfs mount http://target.com/httpfs.php /tmp/httpfs/ /home/john/
 
-    4. Now the remote /home/john/ is mounted in /tmp/phpfs/, head there to
+    4. Now the remote /home/john/ is mounted in /tmp/httpfs/, head there to
        browse the remote files.
 
     5. Unmount the filesystem:
 
-           $ fusermount -u /tmp/phpfs/
+           $ fusermount -u /tmp/httpfs/
 
-Prepare the enviroinment:
+Prepare the environment:
 
     1. Install dependencies
 

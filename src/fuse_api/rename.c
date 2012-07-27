@@ -1,14 +1,15 @@
-#include "../phpfs.h"
+#include "../httpfs.h"
 
-int phpfs_rename( const char *path , const char *newpath)
+int httpfs_rename( const char *path ,
+                   const char *newpath )
 {
-    struct raw_data raw_data = { ( char * )newpath, strlen(newpath) };
+    struct raw_data raw_data = { ( char * )newpath , strlen( newpath ) };
 
-    PHPFS_DO_REQUEST_WITH_DATA( PHPFS_OPCODE_rename )
+    HTTPFS_DO_REQUEST_WITH_DATA( HTTPFS_OPCODE_rename )
     {
-        PHPFS_CHECK_RESPONSE_STATUS;
+        HTTPFS_CHECK_RESPONSE_STATUS;
 
-        PHPFS_CLEANUP;
+        HTTPFS_CLEANUP;
         return 0;
     }
 }
