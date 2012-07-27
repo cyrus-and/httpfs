@@ -35,8 +35,8 @@ target_link_libraries( httpfs ${CURL_LIBRARY} ${FUSE_LIBRARIES} )
 
 # aux targets
 add_custom_target(
-  test-local
-  COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/../test/test-local.sh
+  test-local-php
+  COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/../test/test-local-php.sh
   DEPENDS httpfs
 )
 

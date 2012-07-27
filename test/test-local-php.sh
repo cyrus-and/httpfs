@@ -2,17 +2,17 @@
 
 echo '>>> Setting up the environment'
 mkdir -p ./www/
-mkdir -p /tmp/phpfs/
+mkdir -p /tmp/httpfs/
 echo '>>> Generating PHP file'
-./phpfs generate > ./www/phpfs.php
+./httpfs generate php > ./www/httpfs.php
 echo '>>> Starting web server on http://localhost:8000'
 php -S localhost:8000 -t ./www/ &>> php.log &
 PHP=$!
 echo '>>> Mounting filesystem'
-./phpfs mount http://localhost:8000/phpfs.php /tmp/phpfs/ &>> ./phpfs.log &
-PHPFS=$!
+./httpfs mount http://localhost:8000/httpfs.php /tmp/httpfs/ &>> ./httpfs.log &
+HTTPFS=$!
 echo ">>> Exit with: kill $PHP"
 wait $PHP
-fusermount -u /tmp/phpfs/ &> /dev/null
-kill $PHPFS &> /dev/null
+fusermount -u /tmp/httpfs/ &> /dev/null
+kill $HTTPFS &> /dev/null
 exit 0
