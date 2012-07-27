@@ -1,6 +1,6 @@
 #include <stdlib.h>
 #include <string.h>
-#include "phpfs.h"
+#include "httpfs.h"
 
 static size_t retrieve_chunk( char *ptr ,
                               size_t size ,
@@ -19,7 +19,7 @@ static size_t retrieve_chunk( char *ptr ,
     return chunk_size;
 }
 
-CURLcode phpfs_do_post( const struct raw_data *in ,
+CURLcode httpfs_do_post( const struct raw_data *in ,
                         struct raw_data *out )
 {
     CURL *curl;
@@ -27,8 +27,8 @@ CURLcode phpfs_do_post( const struct raw_data *in ,
     out->payload = malloc( 1 );
     out->size = 0;
 
-    curl = phpfs.curl;
-    curl_easy_setopt( curl , CURLOPT_URL , phpfs.php_url );
+    curl = httpfs.curl;
+    curl_easy_setopt( curl , CURLOPT_URL , httpfs.php_url );
     curl_easy_setopt( curl , CURLOPT_POSTFIELDS , in->payload );
     curl_easy_setopt( curl , CURLOPT_POSTFIELDSIZE , in->size );
     curl_easy_setopt( curl , CURLOPT_WRITEFUNCTION , retrieve_chunk );

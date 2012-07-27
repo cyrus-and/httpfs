@@ -1,5 +1,5 @@
-#ifndef _PHPFS_DEBUG_H
-#define _PHPFS_DEBUG_H
+#ifndef _HTTPFS_DEBUG_H
+#define _HTTPFS_DEBUG_H
 
 #ifndef NDEBUG
 

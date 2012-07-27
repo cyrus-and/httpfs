@@ -1,16 +1,16 @@
 #include <stdlib.h>
 #include "generator.h"
-#include "phpfs.h"
+#include "httpfs.h"
 #include "fuse_api/fuse_api.h"
 
-struct phpfs phpfs;
+struct httpfs httpfs;
 
 static void usage()
 {
     fprintf( stderr ,
              "Usage:\n\n"
-             "    phpfs generate\n"
-             "    phpfs mount <url> <mount_point> [<remote_chroot>]\n" );
+             "    httpfs generate\n"
+             "    httpfs mount <url> <mount_point> [<remote_chroot>]\n" );
     exit( EXIT_FAILURE );
 }
 
@@ -19,7 +19,7 @@ static void check_remote_availability()
     struct stat ss;
     int errno;
 
-    if ( errno = -phpfs_getattr( "/" , &ss ) , errno )
+    if ( errno = -httpfs_getattr( "/" , &ss ) , errno )
     {
         fprintf( stderr , "Unable to mount: " );
 
@@ -48,7 +48,7 @@ int main( int argc , char *argv[] )
     if ( strcmp( argv[ 1 ] , "generate" ) == 0 )
     {
         if ( argc != 2 ) usage();
-        phpfs_generate_php();
+        httpfs_generate_php();
         return EXIT_SUCCESS;
     }
     else if ( strcmp( argv[ 1 ] , "mount" ) == 0 )
@@ -56,18 +56,18 @@ int main( int argc , char *argv[] )
         if ( argc != 4 && argc != 5 ) usage();
 
         /* global context */
-        phpfs.php_url = argv[ 2 ];
-        phpfs.remote_chroot = ( argc == 5 ? argv[ 4 ] : NULL );
-        phpfs.curl = curl_easy_init();
+        httpfs.php_url = argv[ 2 ];
+        httpfs.remote_chroot = ( argc == 5 ? argv[ 4 ] : NULL );
+        httpfs.curl = curl_easy_init();
 
-        if ( !phpfs.curl )
+        if ( !httpfs.curl )
         {
             fprintf( stderr , "Can't initialize cURL\n" );
             return EXIT_FAILURE;
         }
 
         check_remote_availability();
-        return phpfs_fuse_start( &phpfs , argv[ 3 ] );
+        return httpfs_fuse_start( &httpfs , argv[ 3 ] );
     }
     else usage();
 

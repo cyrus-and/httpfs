@@ -1,5 +1,5 @@
-#ifndef _PHPFS_PHPFS_H
-#define _PHPFS_PHPFS_H
+#ifndef _HTTPFS_HTTPFS_H
+#define _HTTPFS_HTTPFS_H
 
 /*
 
@@ -49,98 +49,98 @@
    calling this macros; a 'struct raw_data raw_data' may contains the additional
    data to pass to the PHP script; this macros expect a following block where
    the logic should be implemented */
-#define PHPFS_DO_SIMPLE_REQUEST( op ) \
-    _PHPFS_DO_REQUEST( op , \
-    phpfs_prepare_request( &_in , op , NULL , path , NULL ); )
+#define HTTPFS_DO_SIMPLE_REQUEST( op ) \
+    _HTTPFS_DO_REQUEST( op , \
+    httpfs_prepare_request( &_in , op , NULL , path , NULL ); )
 
-#define PHPFS_DO_REQUEST_WITH_HEADER( op ) \
-    _PHPFS_DO_REQUEST( op , \
+#define HTTPFS_DO_REQUEST_WITH_HEADER( op ) \
+    _HTTPFS_DO_REQUEST( op , \
     _header_data.payload = ( char * )&header; \
     _header_data.size = sizeof( header ); \
-    phpfs_prepare_request( &_in , op , &_header_data , path , NULL ); )
+    httpfs_prepare_request( &_in , op , &_header_data , path , NULL ); )
 
-#define PHPFS_DO_REQUEST_WITH_DATA( op ) \
-    _PHPFS_DO_REQUEST( op , \
-    phpfs_prepare_request( &_in , op , NULL , path , &raw_data ); )
+#define HTTPFS_DO_REQUEST_WITH_DATA( op ) \
+    _HTTPFS_DO_REQUEST( op , \
+    httpfs_prepare_request( &_in , op , NULL , path , &raw_data ); )
 
-#define PHPFS_DO_REQUEST_WITH_HEADER_AND_DATA( op ) \
-    _PHPFS_DO_REQUEST( op , \
+#define HTTPFS_DO_REQUEST_WITH_HEADER_AND_DATA( op ) \
+    _HTTPFS_DO_REQUEST( op , \
     _header_data.payload = ( char * )&header; \
     _header_data.size = sizeof( header ); \
-    phpfs_prepare_request( &_in , op , &_header_data , path , &raw_data ); )
+    httpfs_prepare_request( &_in , op , &_header_data , path , &raw_data ); )
 
 /* common */
-#define _PHPFS_DO_REQUEST( op , prepare_header ) \
+#define _HTTPFS_DO_REQUEST( op , prepare_header ) \
     LOGF( "SEND REQUEST: %s (%i)" , \
-          PHPFS_OPCODE_NAMES[ op ] , op ); \
+          HTTPFS_OPCODE_NAMES[ op ] , op ); \
     struct raw_data _in = { 0 } , _out = { 0 } , _header_data = { 0 }; \
     struct raw_data response = { 0 }; \
     ( void )response; \
     ( void )_header_data; \
     prepare_header \
-    if ( CURLE_OK != phpfs_do_post( &_in , &_out ) ) { \
+    if ( CURLE_OK != httpfs_do_post( &_in , &_out ) ) { \
         LOG( "SEND REQUEST: failed" ); \
-        PHPFS_CLEANUP; \
+        HTTPFS_CLEANUP; \
         return -ECOMM; \
     } else
 
 /* check the response status and return if an error is occurred */
-#define PHPFS_CHECK_RESPONSE_STATUS \
+#define HTTPFS_CHECK_RESPONSE_STATUS \
     response.payload = _out.payload + 1; \
     response.size = _out.size - 1; \
     switch ( *_out.payload ) { \
-    _PHPFS_CHECK_HANDLE_ERROR( ENTRY_NOT_FOUND , ENOENT ) \
-    _PHPFS_CHECK_HANDLE_ERROR( CANNOT_ACCESS , EACCES ) \
-    _PHPFS_CHECK_HANDLE_ERROR( NOT_PERMITTED , EPERM ) \
-    case 0: _PHPFS_DUMP_STATUS; break; \
-    default: PHPFS_CLEANUP; return -EBADMSG; \
+    _HTTPFS_CHECK_HANDLE_ERROR( ENTRY_NOT_FOUND , ENOENT ) \
+    _HTTPFS_CHECK_HANDLE_ERROR( CANNOT_ACCESS , EACCES ) \
+    _HTTPFS_CHECK_HANDLE_ERROR( NOT_PERMITTED , EPERM ) \
+    case 0: _HTTPFS_DUMP_STATUS; break; \
+    default: HTTPFS_CLEANUP; return -EBADMSG; \
     }
 
-#define _PHPFS_CHECK_HANDLE_ERROR( status , errno ) \
-    case PHPFS_STATUS_##status: \
-    _PHPFS_DUMP_STATUS; PHPFS_CLEANUP; \
+#define _HTTPFS_CHECK_HANDLE_ERROR( status , errno ) \
+    case HTTPFS_STATUS_##status: \
+    _HTTPFS_DUMP_STATUS; HTTPFS_CLEANUP; \
     return -errno;
 
-#define _PHPFS_DUMP_STATUS \
+#define _HTTPFS_DUMP_STATUS \
     LOGF( "RESPONSE: %s (%i) %s" , \
-          PHPFS_STATUS_NAMES[ ( int )*_out.payload ] , *_out.payload , \
+          HTTPFS_STATUS_NAMES[ ( int )*_out.payload ] , *_out.payload , \
           *_out.payload && _out.size > 1 ? _out.payload + 1 : "" )
 
 /* to be called before return in FUSE API functions */
-#define PHPFS_CLEANUP \
+#define HTTPFS_CLEANUP \
     free( _in.payload ); \
     free( _out.payload )
 
 /* global context */
-extern struct phpfs
+extern struct httpfs
 {
     const char *php_url;
     const char *remote_chroot;
     CURL *curl;
 }
-phpfs;
+httpfs;
 
 /* operation codes */
-#define _( x ) PHPFS_OPCODE_##x ,
-enum { PHPFS_OPCODE_NONE ,
+#define _( x ) HTTPFS_OPCODE_##x ,
+enum { HTTPFS_OPCODE_NONE ,
 #include "fuse_functions.def"
 };
-extern const char *PHPFS_OPCODE_NAMES[];
+extern const char *HTTPFS_OPCODE_NAMES[];
 
 /* response status */
-#define _( x ) PHPFS_STATUS_##x ,
+#define _( x ) HTTPFS_STATUS_##x ,
 enum {
 #include "statuses.def"
 };
-extern const char *PHPFS_STATUS_NAMES[];
+extern const char *HTTPFS_STATUS_NAMES[];
 
-int phpfs_fuse_start( struct phpfs *phpfs ,
-                      char *mount_point );
+int httpfs_fuse_start( struct httpfs *httpfs ,
+                       char *mount_point );
 
-void phpfs_prepare_request( struct raw_data *in ,
-                            uint8_t opcode ,
-                            struct raw_data *header ,
-                            const char *path ,
-                            struct raw_data *data );
+void httpfs_prepare_request( struct raw_data *in ,
+                             uint8_t opcode ,
+                             struct raw_data *header ,
+                             const char *path ,
+                             struct raw_data *data );
 
 #endif

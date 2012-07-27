@@ -1,6 +1,6 @@
-#include "../phpfs.h"
+#include "../httpfs.h"
 
-int phpfs_chmod( const char *path ,
+int httpfs_chmod( const char *path ,
                   mode_t mode )
 {
     struct
@@ -9,10 +9,10 @@ int phpfs_chmod( const char *path ,
     }
     header = { htonl( mode ) };
 
-    PHPFS_DO_REQUEST_WITH_HEADER( PHPFS_OPCODE_chmod )
+    HTTPFS_DO_REQUEST_WITH_HEADER( HTTPFS_OPCODE_chmod )
     {
-        PHPFS_CHECK_RESPONSE_STATUS;
-        PHPFS_CLEANUP;
+        HTTPFS_CHECK_RESPONSE_STATUS;
+        HTTPFS_CLEANUP;
         return 0;
     }
 }

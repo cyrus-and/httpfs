@@ -1,8 +1,8 @@
-#include "../phpfs.h"
+#include "../httpfs.h"
 
-int phpfs_create( const char *path ,
-                  mode_t mode ,
-                  struct fuse_file_info *fi )
+int httpfs_create( const char *path ,
+                   mode_t mode ,
+                   struct fuse_file_info *fi )
 {
     struct
     {
@@ -10,10 +10,10 @@ int phpfs_create( const char *path ,
     }
     header = { htonl( mode ) };
 
-    PHPFS_DO_REQUEST_WITH_HEADER( PHPFS_OPCODE_create )
+    HTTPFS_DO_REQUEST_WITH_HEADER( HTTPFS_OPCODE_create )
     {
-        PHPFS_CHECK_RESPONSE_STATUS;
-        PHPFS_CLEANUP;
+        HTTPFS_CHECK_RESPONSE_STATUS;
+        HTTPFS_CLEANUP;
         return 0;
     }
 }

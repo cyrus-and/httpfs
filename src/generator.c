@@ -1,7 +1,7 @@
 #include <stdio.h>
-#include "phpfs.h"
+#include "httpfs.h"
 
-void phpfs_generate_php()
+void httpfs_generate_php()
 {
 #include "template.php.h"
     int i;
@@ -9,20 +9,20 @@ void phpfs_generate_php()
 
     /* opcode names array */
     printf( "<?php\n\n" );
-    printf( "$PHPFS_OPCODE_NAMES = array(\n" );
+    printf( "$HTTPFS_OPCODE_NAMES = array(\n" );
 
-    for ( p = PHPFS_OPCODE_NAMES ; *p ; p++ )
+    for ( p = HTTPFS_OPCODE_NAMES ; *p ; p++ )
     {
-        printf( "    'phpfs_%s' ,\n" , *p );
+        printf( "    'httpfs_%s' ,\n" , *p );
     }
 
     printf( ");\n\n" );
 
     /* status codes numeric constants */
-    for ( p = PHPFS_STATUS_NAMES ; *p ; p++ )
+    for ( p = HTTPFS_STATUS_NAMES ; *p ; p++ )
     {
         printf( "define( '%s' , %i );\n" ,
-                *p , ( int )(p - PHPFS_STATUS_NAMES ) );
+                *p , ( int )(p - HTTPFS_STATUS_NAMES ) );
     }
 
 #ifndef NDEBUG

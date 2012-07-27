@@ -1,14 +1,14 @@
-#include "../phpfs.h"
+#include "../httpfs.h"
 
-int phpfs_link( const char *path , const char *newpath)
+int httpfs_link( const char *path ,
+                 const char *newpath )
 {
     struct raw_data raw_data = { ( char * )newpath, strlen(newpath) };
 
-    PHPFS_DO_REQUEST_WITH_DATA( PHPFS_OPCODE_link )
+    HTTPFS_DO_REQUEST_WITH_DATA( HTTPFS_OPCODE_link )
     {
-        PHPFS_CHECK_RESPONSE_STATUS;
-
-        PHPFS_CLEANUP;
+        HTTPFS_CHECK_RESPONSE_STATUS;
+        HTTPFS_CLEANUP;
         return 0;
     }
 }

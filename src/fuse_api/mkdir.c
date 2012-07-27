@@ -1,7 +1,7 @@
-#include "../phpfs.h"
+#include "../httpfs.h"
 
-int phpfs_mkdir( const char *path ,
-                 mode_t mode )
+int httpfs_mkdir( const char *path ,
+                  mode_t mode )
 {
     struct
     {
@@ -9,10 +9,10 @@ int phpfs_mkdir( const char *path ,
     }
     header = { htonl( mode | S_IFDIR ) };
 
-    PHPFS_DO_REQUEST_WITH_HEADER( PHPFS_OPCODE_mkdir )
+    HTTPFS_DO_REQUEST_WITH_HEADER( HTTPFS_OPCODE_mkdir )
     {
-        PHPFS_CHECK_RESPONSE_STATUS;
-        PHPFS_CLEANUP;
+        HTTPFS_CHECK_RESPONSE_STATUS;
+        HTTPFS_CLEANUP;
         return 0;
     }
 }
