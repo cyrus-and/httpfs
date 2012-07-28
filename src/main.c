@@ -35,7 +35,7 @@ static void check_remote_availability()
             break;
 
         default:
-            fprintf( stderr , "errno (%i) %s\n" , errno , sys_errlist[ errno ]);
+            fprintf( stderr , "errno (%i) %s\n" , errno , strerror( errno ) );
         }
 
         exit( EXIT_FAILURE );
