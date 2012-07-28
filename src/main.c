@@ -9,10 +9,16 @@ static void usage()
 {
     fprintf( stderr ,
              "Usage:\n\n"
+             "    httpfs --help\n"
+             "    httpfs --version\n"
              "    httpfs generators\n"
              "    httpfs generate <generator>\n"
              "    httpfs mount <url> <mount_point> [<remote_chroot>]\n" );
-    exit( EXIT_FAILURE );
+}
+
+static void info()
+{
+    fprintf( stderr , "httpfs 0.1\n" );
 }
 
 static void check_remote_availability()
@@ -44,15 +50,20 @@ static void check_remote_availability()
 
 int main( int argc , char *argv[] )
 {
-    if ( argc == 1 ) usage();
-
-    if ( strcmp( argv[ 1 ] , "generators" ) == 0 )
+    if ( argc == 2 && strcmp( argv[ 1 ] , "--version" ) == 0 )
+    {
+        info();
+    }
+    else if ( argc == 2 && strcmp( argv[ 1 ] , "--help" ) == 0 )
+    {
+        usage();
+    }
+    else if ( argc == 2 && strcmp( argv[ 1 ] , "generators" ) == 0 )
     {
 #define _( x ) printf( #x "\n" );
 #include "generators.def"
-        return EXIT_SUCCESS;
     }
-    if ( strcmp( argv[ 1 ] , "generate" ) == 0 )
+    else if ( argc == 3 && strcmp( argv[ 1 ] , "generate" ) == 0 )
     {
         int i;
         struct generator
@@ -65,8 +76,6 @@ int main( int argc , char *argv[] )
 #include "generators.def"
         };
 
-        if ( argc != 3 ) usage();
-
         for ( i = 0 ; i < sizeof( generators ) / sizeof( struct generator ) ; i++ )
         {
             if ( strcmp( generators[ i ].name , argv[ 2 ] ) == 0 )
@@ -77,11 +86,11 @@ int main( int argc , char *argv[] )
         }
 
         usage();
+        return EXIT_FAILURE;
     }
-    else if ( strcmp( argv[ 1 ] , "mount" ) == 0 )
+    else if ( ( argc == 4 || argc == 5 ) &&
+              strcmp( argv[ 1 ] , "mount" ) == 0 )
     {
-        if ( argc != 4 && argc != 5 ) usage();
-
         /* global context */
         httpfs.php_url = argv[ 2 ];
         httpfs.remote_chroot = ( argc == 5 ? argv[ 4 ] : NULL );
@@ -96,7 +105,11 @@ int main( int argc , char *argv[] )
         check_remote_availability();
         return httpfs_fuse_start( &httpfs , argv[ 3 ] );
     }
-    else usage();
+    else
+    {
+        usage();
+        return EXIT_FAILURE;
+    }
 
     return EXIT_SUCCESS;
 }
