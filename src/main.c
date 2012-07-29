@@ -2,6 +2,7 @@
 #include "generators.h"
 #include "httpfs.h"
 #include "fuse_api/fuse_api.h"
+#include "version.h"
 
 struct httpfs httpfs;
 
@@ -18,7 +19,7 @@ static void usage()
 
 static void info()
 {
-    fprintf( stderr , "httpfs 0.1\n" );
+    fprintf( stderr , "httpfs " HTTPFS_VERSION "\n" );
 }
 
 static void check_remote_availability()
