@@ -20,6 +20,12 @@ int httpfs_write( const char *path ,
         uint32_t write_size;
 
         HTTPFS_CHECK_RESPONSE_STATUS;
+        if ( response.size != sizeof( uint32_t ) )
+        {
+            HTTPFS_CLEANUP;
+            return -EBADMSG;
+        }
+
         write_size = ntohl( *( uint32_t * )response.payload );
         HTTPFS_CLEANUP;
         return write_size;

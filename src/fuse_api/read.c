@@ -17,8 +17,12 @@ int httpfs_read( const char *path ,
     HTTPFS_DO_REQUEST_WITH_HEADER( HTTPFS_OPCODE_read )
     {
         HTTPFS_CHECK_RESPONSE_STATUS;
+        if ( size != response.size )
+        {
+            HTTPFS_CLEANUP;
+            return -EBADMSG;
+        }
 
-        /* TODO check chunk size */
         memcpy( buf , response.payload , response.size );
 
         HTTPFS_CLEANUP;

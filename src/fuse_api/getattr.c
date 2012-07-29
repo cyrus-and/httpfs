@@ -24,6 +24,11 @@ int httpfs_getattr( const char *path ,
         attrs;
 
         HTTPFS_CHECK_RESPONSE_STATUS;
+        if ( response.size != sizeof( struct attrs ) )
+        {
+            HTTPFS_CLEANUP;
+            return -EBADMSG;
+        }
 
         memset( stbuf , 0 , sizeof( struct stat ) );
         attrs = *( struct attrs * )response.payload;

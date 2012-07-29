@@ -12,7 +12,9 @@ int httpfs_readdir( const char *path ,
 
         HTTPFS_CHECK_RESPONSE_STATUS;
 
-        for ( p = response.payload ; p - response.payload < response.size ; p += strlen( p ) + 1 )
+        for ( p = response.payload ;
+              p - response.payload < response.size ;
+              p += strnlen( p , response.size - ( p - response.payload ) ) + 1 )
         {
             filler( buf , p , NULL , 0 );
         }
