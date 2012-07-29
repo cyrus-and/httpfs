@@ -92,7 +92,7 @@
     _HTTPFS_CHECK_HANDLE_ERROR( ENTRY_NOT_FOUND , ENOENT ) \
     _HTTPFS_CHECK_HANDLE_ERROR( CANNOT_ACCESS , EACCES ) \
     _HTTPFS_CHECK_HANDLE_ERROR( NOT_PERMITTED , EPERM ) \
-    case 0: _HTTPFS_DUMP_STATUS; break; \
+    case HTTPFS_STATUS_OK: _HTTPFS_DUMP_STATUS; break; \
     default: HTTPFS_CLEANUP; return -EBADMSG; \
     }
 
@@ -104,7 +104,8 @@
 #define _HTTPFS_DUMP_STATUS \
     LOGF( "RESPONSE: %s (%i) %s" , \
           HTTPFS_STATUS_NAMES[ ( int )*_out.payload ] , *_out.payload , \
-          *_out.payload && _out.size > 1 ? _out.payload + 1 : "" )
+          *_out.payload != HTTPFS_STATUS_OK && _out.size > 1 ? \
+          _out.payload + 1 : "" )
 
 /* to be called before return in FUSE API functions */
 #define HTTPFS_CLEANUP \
