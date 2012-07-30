@@ -71,15 +71,16 @@
 
 /* common */
 #define _HTTPFS_DO_REQUEST( op , prepare_header ) \
-    LOGF( "SEND REQUEST: %s (%i)" , \
+    LOGF( "REQUEST: %s (%i)" , \
           HTTPFS_OPCODE_NAMES[ op ] , op ); \
     struct raw_data _in = { 0 } , _out = { 0 } , _header_data = { 0 }; \
     struct raw_data response = { 0 }; \
     ( void )response; \
     ( void )_header_data; \
     prepare_header \
+    DUMP_RAW_DATA( "SENDING " , _in ); \
     if ( CURLE_OK != httpfs_do_post( &_in , &_out ) ) { \
-        LOG( "SEND REQUEST: failed" ); \
+        LOG( "REQUEST: failed" ); \
         HTTPFS_CLEANUP; \
         return -ECOMM; \
     } else
@@ -88,6 +89,7 @@
 #define HTTPFS_CHECK_RESPONSE_STATUS \
     response.payload = _out.payload + 1; \
     response.size = _out.size - 1; \
+    DUMP_RAW_DATA( "RECEIVED " , _out ); \
     switch ( *_out.payload ) { \
     _HTTPFS_CHECK_HANDLE_ERROR( ENTRY_NOT_FOUND , ENOENT ) \
     _HTTPFS_CHECK_HANDLE_ERROR( CANNOT_ACCESS , EACCES ) \
@@ -102,10 +104,8 @@
     return -errno;
 
 #define _HTTPFS_DUMP_STATUS \
-    LOGF( "RESPONSE: %s (%i) %s" , \
-          HTTPFS_STATUS_NAMES[ ( int )*_out.payload ] , *_out.payload , \
-          *_out.payload != HTTPFS_STATUS_OK && _out.size > 1 ? \
-          _out.payload + 1 : "" )
+    LOGF( "RESPONSE: %s (%i)" , \
+          HTTPFS_STATUS_NAMES[ ( int )*_out.payload ] , *_out.payload ); \
 
 /* to be called before return in FUSE API functions */
 #define HTTPFS_CLEANUP \

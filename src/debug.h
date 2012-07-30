@@ -4,6 +4,7 @@
 #ifndef NDEBUG
 
 #include <stdio.h>
+#include "net.h"
 
 #define DEBUG_PREFIX ">>> "
 
@@ -15,10 +16,19 @@
     do fprintf( stderr , DEBUG_PREFIX format "\n" , ##__VA_ARGS__ ); \
     while ( 0 )
 
+#define DUMP_RAW_DATA( label , raw_data ) \
+    do { fprintf( stderr , DEBUG_PREFIX "%s%lu byte: " , \
+                  label , raw_data.size ); \
+         httpfs_dump_raw_data( &raw_data ); } \
+    while ( 0 )
+
+void httpfs_dump_raw_data( struct raw_data *raw_data );
+
 #else /* not DEBUG */
 
 #define LOG( string ) do ; while ( 0 )
 #define LOGF( format , ... ) do ; while ( 0 )
+#define DUMP_RAW_DATA( label , raw_data ) do ; while ( 0 )
 
 #endif
 

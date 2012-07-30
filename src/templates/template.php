@@ -21,7 +21,7 @@ function dump_error( $error , $custom_error_message = null )
     global $error_message;
     printf( '%c' , $error );
     $message = $custom_error_message ? $custom_error_message : $error_message;
-    if ( $message ) echo "$message\x00";
+    if ( $message ) echo $message;
 }
 
 /* FUSE API */
