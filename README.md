@@ -47,10 +47,10 @@ Prepare the environment
 
  1. Install dependencies:
 
-     - fuse
-     - libfuse-dev
-     - libcurl4-openssl-dev
-     - cmake
+        fuse
+        libfuse-dev
+        libcurl4-openssl-dev
+        cmake
 
  2. Make sure the current user is in the `fuse` group (this preliminary step is
     mandatory to use any FUSE filesystem):
