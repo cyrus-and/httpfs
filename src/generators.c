@@ -22,7 +22,7 @@ void httpfs_generate_php()
     for ( p = HTTPFS_STATUS_NAMES ; *p ; p++ )
     {
         printf( "define( '%s' , %i );\n" ,
-                *p , ( int )(p - HTTPFS_STATUS_NAMES ) );
+                *p , ( int )( p - HTTPFS_STATUS_NAMES ) );
     }
 
 #ifndef NDEBUG

@@ -20,7 +20,7 @@ static size_t retrieve_chunk( char *ptr ,
 }
 
 CURLcode httpfs_do_post( const struct raw_data *in ,
-                        struct raw_data *out )
+                         struct raw_data *out )
 {
     CURL *curl;
 

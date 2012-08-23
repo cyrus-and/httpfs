@@ -95,7 +95,7 @@ function httpfs_read( $data )
 function httpfs_write( $data )
 {
     $fields = unpack( 'Nsize/Noffset' , $data );
-    list( $path , $write_data ) = explode ( "\x00" , substr( $data , 8 ) , 2 );
+    list( $path , $write_data ) = explode( "\x00" , substr( $data , 8 ) , 2 );
 
     $f = fopen( $path , 'a' );
     if ( $f )
@@ -145,7 +145,6 @@ function httpfs_create( $data )
     }
 }
 
-
 function httpfs_unlink( $data )
 {
     $fields = unpack( 'a*path' , $data );
@@ -193,7 +192,7 @@ function httpfs_rmdir( $data )
 
 function httpfs_rename( $data )
 {
-    list( $path , $newpath ) = explode ( "\x00" , $data, 2 );
+    list( $path , $newpath ) = explode( "\x00" , $data , 2 );
     $r = rename( $path , $newpath );
     if ( $r )
     {
@@ -207,7 +206,7 @@ function httpfs_rename( $data )
 
 function httpfs_link( $data )
 {
-    list( $path , $newpath ) = explode ( "\x00" , $data, 2 );
+    list( $path , $newpath ) = explode( "\x00" , $data , 2 );
     $r = link( $path , $newpath );
     if ( $r )
     {
@@ -237,7 +236,7 @@ function httpfs_readlink( $data )
 
 function httpfs_symlink( $data )
 {
-    list( $path , $newpath ) = explode ( "\x00" , $data , 2 );
+    list( $path , $newpath ) = explode( "\x00" , $data , 2 );
 
     $s = symlink( $path , $newpath );
     if ( $s )
@@ -269,17 +268,16 @@ function httpfs_chown( $data )
 {
     $fields = unpack( 'Nuid/Ngid/a*path' , $data );
 
-
-    if ($fields['uid'] != 0xffffffff)
+    if ( $fields[ 'uid' ] != 0xffffffff )
     {
-	$u = chown($fields['path'],$fields['uid']);
-	$g = TRUE;
+        $u = chown( $fields[ 'path' ] , $fields[ 'uid' ] );
+        $g = TRUE;
     }
 
-    if ($fields['gid'] != 0xffffffff)
+    if ( $fields[ 'gid' ] != 0xffffffff )
     {
-	$g = chgrp($fields['path'],$fields['gid']);
-	$u = TRUE;
+        $g = chgrp( $fields[ 'path' ] , $fields[ 'gid' ] );
+        $u = TRUE;
     }
 
     if ( $u && $g )
