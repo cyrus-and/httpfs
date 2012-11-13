@@ -51,23 +51,27 @@
    the logic should be implemented */
 #define HTTPFS_DO_SIMPLE_REQUEST( op ) \
     _HTTPFS_DO_REQUEST( op , \
-    httpfs_prepare_request( &_in , op , NULL , path , NULL ); )
+    httpfs_prepare_request( fuse_get_context()->private_data , \
+                            &_in , op , NULL , path , NULL ); )
 
 #define HTTPFS_DO_REQUEST_WITH_HEADER( op ) \
     _HTTPFS_DO_REQUEST( op , \
     _header_data.payload = ( char * )&header; \
     _header_data.size = sizeof( header ); \
-    httpfs_prepare_request( &_in , op , &_header_data , path , NULL ); )
+    httpfs_prepare_request( fuse_get_context()->private_data , \
+                            &_in , op , &_header_data , path , NULL ); )
 
 #define HTTPFS_DO_REQUEST_WITH_DATA( op ) \
     _HTTPFS_DO_REQUEST( op , \
-    httpfs_prepare_request( &_in , op , NULL , path , &raw_data ); )
+    httpfs_prepare_request( fuse_get_context()->private_data , \
+                            &_in , op , NULL , path , &raw_data ); )
 
 #define HTTPFS_DO_REQUEST_WITH_HEADER_AND_DATA( op ) \
     _HTTPFS_DO_REQUEST( op , \
     _header_data.payload = ( char * )&header; \
     _header_data.size = sizeof( header ); \
-    httpfs_prepare_request( &_in , op , &_header_data , path , &raw_data ); )
+    httpfs_prepare_request( fuse_get_context()->private_data , \
+                            &_in , op , &_header_data , path , &raw_data ); )
 
 /* common */
 #define _HTTPFS_DO_REQUEST( op , prepare_header ) \
@@ -79,7 +83,8 @@
     ( void )_header_data; \
     prepare_header \
     DUMP_RAW_DATA( "SENDING " , _in ); \
-    if ( CURLE_OK != httpfs_do_post( &_in , &_out ) ) { \
+    if ( CURLE_OK != httpfs_do_post( fuse_get_context()->private_data , \
+                                     &_in , &_out ) ) { \
         LOG( "REQUEST: failed" ); \
         HTTPFS_CLEANUP; \
         return -ECOMM; \
@@ -112,14 +117,13 @@
     free( _in.payload ); \
     free( _out.payload )
 
-/* global context */
-extern struct httpfs
+/* context */
+struct httpfs
 {
     const char *php_url;
     const char *remote_chroot;
     CURL *curl;
-}
-httpfs;
+};
 
 /* operation codes */
 #define _( x ) HTTPFS_OPCODE_##x ,
@@ -138,7 +142,8 @@ extern const char *HTTPFS_STATUS_NAMES[];
 int httpfs_fuse_start( struct httpfs *httpfs ,
                        char *mount_point );
 
-void httpfs_prepare_request( struct raw_data *in ,
+void httpfs_prepare_request( struct httpfs *httpfs ,
+                             struct raw_data *in ,
                              uint8_t opcode ,
                              struct raw_data *header ,
                              const char *path ,

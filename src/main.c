@@ -4,8 +4,6 @@
 #include "fuse_api/fuse_api.h"
 #include "version.h"
 
-struct httpfs httpfs;
-
 static void usage()
 {
     fprintf( stderr ,
@@ -65,7 +63,8 @@ int main( int argc , char *argv[] )
     else if ( ( argc == 4 || argc == 5 ) &&
               strcmp( argv[ 1 ] , "mount" ) == 0 )
     {
-        /* global context */
+        struct httpfs httpfs;
+
         httpfs.php_url = argv[ 2 ];
         httpfs.remote_chroot = ( argc == 5 ? argv[ 4 ] : NULL );
         httpfs.curl = curl_easy_init();

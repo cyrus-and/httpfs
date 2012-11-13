@@ -36,7 +36,8 @@ int httpfs_fuse_start( struct httpfs *httpfs ,
     return fuse_main( argc , argv , &operations , httpfs );
 }
 
-void httpfs_prepare_request( struct raw_data *in ,
+void httpfs_prepare_request( struct httpfs *httpfs ,
+                             struct raw_data *in ,
                              uint8_t opcode ,
                              struct raw_data *header ,
                              const char *path ,
@@ -45,7 +46,7 @@ void httpfs_prepare_request( struct raw_data *in ,
     size_t offset , header_size , remote_chroot_length , path_length , data_size;
 
     header_size = ( header ? header->size : 0 );
-    remote_chroot_length = ( httpfs.remote_chroot ? strlen( httpfs.remote_chroot ) : 0 );
+    remote_chroot_length = ( httpfs->remote_chroot ? strlen( httpfs->remote_chroot ) : 0 );
     path_length = strlen( path ) + 1;
     data_size = ( data ? data->size : 0 );
 
@@ -64,7 +65,7 @@ void httpfs_prepare_request( struct raw_data *in ,
 
     /* path */
     offset += header_size;
-    memcpy( in->payload + offset , httpfs.remote_chroot , remote_chroot_length );
+    memcpy( in->payload + offset , httpfs->remote_chroot , remote_chroot_length );
     offset += remote_chroot_length;
     memcpy( in->payload + offset , path , path_length );
 
