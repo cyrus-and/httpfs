@@ -27,7 +27,7 @@ static int check_remote_availability( struct httpfs *httpfs )
 }
 
 int httpfs_fuse_start( struct httpfs *httpfs ,
-                       const char *php_url ,
+                       const char *url ,
                        const char *remote_chroot ,
                        char *mount_point )
 {
@@ -40,7 +40,7 @@ int httpfs_fuse_start( struct httpfs *httpfs ,
 #include "fuse_functions.def"
     };
 
-    httpfs->php_url = php_url;
+    httpfs->url = url;
     httpfs->remote_chroot = remote_chroot;
 
     /* initialize curl */

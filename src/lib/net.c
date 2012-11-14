@@ -29,7 +29,7 @@ CURLcode httpfs_do_post( struct httpfs *httpfs ,
     out->size = 0;
 
     curl = httpfs->curl;
-    curl_easy_setopt( curl , CURLOPT_URL , httpfs->php_url );
+    curl_easy_setopt( curl , CURLOPT_URL , httpfs->url );
     curl_easy_setopt( curl , CURLOPT_POSTFIELDS , in->payload );
     curl_easy_setopt( curl , CURLOPT_POSTFIELDSIZE , in->size );
     curl_easy_setopt( curl , CURLOPT_WRITEFUNCTION , retrieve_chunk );

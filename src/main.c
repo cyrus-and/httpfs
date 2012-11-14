@@ -51,16 +51,16 @@ int main( int argc , char *argv[] )
               strcmp( argv[ 1 ] , "mount" ) == 0 )
     {
         struct httpfs httpfs;
-        const char *php_url;
+        const char *url;
         const char *remote_chroot;
         char *mount_point;
         int rv;
 
-        php_url = argv[ 2 ];
+        url = argv[ 2 ];
         remote_chroot = ( argc == 5 ? argv[ 4 ] : NULL );
         mount_point = argv[ 3 ];
 
-        rv = httpfs_fuse_start( &httpfs , php_url , remote_chroot , mount_point );
+        rv = httpfs_fuse_start( &httpfs , url , remote_chroot , mount_point );
 
         if ( rv )
         {

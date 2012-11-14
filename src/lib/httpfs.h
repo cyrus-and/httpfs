@@ -130,7 +130,7 @@ enum
 /* context */
 struct httpfs
 {
-    const char *php_url;
+    const char *url;
     const char *remote_chroot;
     CURL *curl;
 };
@@ -150,7 +150,7 @@ enum {
 extern const char *HTTPFS_STATUS_NAMES[];
 
 int httpfs_fuse_start( struct httpfs *httpfs ,
-                       const char *php_url ,
+                       const char *url ,
                        const char *remote_chroot ,
                        char *mount_point );
 
