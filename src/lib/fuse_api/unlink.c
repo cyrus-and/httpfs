@@ -1,4 +1,4 @@
-#include "../httpfs.h"
+#include "httpfs.h"
 
 int httpfs_unlink( const char *path )
 {

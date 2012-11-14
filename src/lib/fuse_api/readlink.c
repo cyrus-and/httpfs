@@ -1,4 +1,4 @@
-#include "../httpfs.h"
+#include "httpfs.h"
 
 int httpfs_readlink( const char *path ,
                      char *buf ,

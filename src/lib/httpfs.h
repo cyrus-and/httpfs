@@ -50,27 +50,31 @@
    data to pass to the PHP script; this macros expect a following block where
    the logic should be implemented */
 #define HTTPFS_DO_SIMPLE_REQUEST( op ) \
-    _HTTPFS_DO_REQUEST( op , \
-    httpfs_prepare_request( &_in , op , NULL , path , NULL ); )
+    _HTTPFS_DO_REQUEST( op , fuse_get_context()->private_data , \
+    httpfs_prepare_request( fuse_get_context()->private_data , \
+                            &_in , op , NULL , path , NULL ); )
 
 #define HTTPFS_DO_REQUEST_WITH_HEADER( op ) \
-    _HTTPFS_DO_REQUEST( op , \
+    _HTTPFS_DO_REQUEST( op , fuse_get_context()->private_data , \
     _header_data.payload = ( char * )&header; \
     _header_data.size = sizeof( header ); \
-    httpfs_prepare_request( &_in , op , &_header_data , path , NULL ); )
+    httpfs_prepare_request( fuse_get_context()->private_data , \
+                            &_in , op , &_header_data , path , NULL ); )
 
 #define HTTPFS_DO_REQUEST_WITH_DATA( op ) \
-    _HTTPFS_DO_REQUEST( op , \
-    httpfs_prepare_request( &_in , op , NULL , path , &raw_data ); )
+    _HTTPFS_DO_REQUEST( op , fuse_get_context()->private_data , \
+    httpfs_prepare_request( fuse_get_context()->private_data , \
+                            &_in , op , NULL , path , &raw_data ); )
 
 #define HTTPFS_DO_REQUEST_WITH_HEADER_AND_DATA( op ) \
-    _HTTPFS_DO_REQUEST( op , \
+    _HTTPFS_DO_REQUEST( op , fuse_get_context()->private_data , \
     _header_data.payload = ( char * )&header; \
     _header_data.size = sizeof( header ); \
-    httpfs_prepare_request( &_in , op , &_header_data , path , &raw_data ); )
+    httpfs_prepare_request( fuse_get_context()->private_data , \
+                            &_in , op , &_header_data , path , &raw_data ); )
 
 /* common */
-#define _HTTPFS_DO_REQUEST( op , prepare_header ) \
+#define _HTTPFS_DO_REQUEST( op , httpfs , prepare_header ) \
     LOGF( "REQUEST: %s (%i)" , \
           HTTPFS_OPCODE_NAMES[ op ] , op ); \
     struct raw_data _in = { 0 } , _out = { 0 } , _header_data = { 0 }; \
@@ -79,7 +83,7 @@
     ( void )_header_data; \
     prepare_header \
     DUMP_RAW_DATA( "SENDING " , _in ); \
-    if ( CURLE_OK != httpfs_do_post( &_in , &_out ) ) { \
+    if ( CURLE_OK != httpfs_do_post( httpfs , &_in , &_out ) ) { \
         LOG( "REQUEST: failed" ); \
         HTTPFS_CLEANUP; \
         return -ECOMM; \
@@ -112,14 +116,24 @@
     free( _in.payload ); \
     free( _out.payload )
 
-/* global context */
-extern struct httpfs
+/* initialization errors */
+enum
+{
+    HTTPFS_NO_ERROR ,
+    HTTPFS_FUSE_ERROR ,
+    HTTPFS_CURL_ERROR ,
+    HTTPFS_UNREACHABLE_SERVER_ERROR ,
+    HTTPFS_WRONG_CHROOT_ERROR ,
+    HTTPFS_ERRNO_ERROR
+};
+
+/* context */
+struct httpfs
 {
     const char *php_url;
     const char *remote_chroot;
     CURL *curl;
-}
-httpfs;
+};
 
 /* operation codes */
 #define _( x ) HTTPFS_OPCODE_##x ,
@@ -136,9 +150,12 @@ enum {
 extern const char *HTTPFS_STATUS_NAMES[];
 
 int httpfs_fuse_start( struct httpfs *httpfs ,
+                       const char *php_url ,
+                       const char *remote_chroot ,
                        char *mount_point );
 
-void httpfs_prepare_request( struct raw_data *in ,
+void httpfs_prepare_request( struct httpfs *httpfs ,
+                             struct raw_data *in ,
                              uint8_t opcode ,
                              struct raw_data *header ,
                              const char *path ,

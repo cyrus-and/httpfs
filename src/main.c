@@ -4,8 +4,6 @@
 #include "fuse_api/fuse_api.h"
 #include "version.h"
 
-struct httpfs httpfs;
-
 static void usage()
 {
     fprintf( stderr ,
@@ -22,33 +20,6 @@ static void info()
     fprintf( stderr , "httpfs " HTTPFS_VERSION "\n" );
 }
 
-static void check_remote_availability()
-{
-    struct stat ss;
-    int errno;
-
-    if ( errno = -httpfs_getattr( "/" , &ss ) , errno )
-    {
-        fprintf( stderr , "Unable to mount: " );
-
-        switch ( errno )
-        {
-        case ECOMM:
-            fprintf( stderr , "cannot reach the remote server\n" );
-            break;
-
-        case ENOENT:
-            fprintf( stderr , "cannot find the remote path\n" );
-            break;
-
-        default:
-            fprintf( stderr , "errno (%i) %s\n" , errno , strerror( errno ) );
-        }
-
-        exit( EXIT_FAILURE );
-    }
-}
-
 int main( int argc , char *argv[] )
 {
     if ( argc == 2 && strcmp( argv[ 1 ] , "--version" ) == 0 )
@@ -61,50 +32,63 @@ int main( int argc , char *argv[] )
     }
     else if ( argc == 2 && strcmp( argv[ 1 ] , "generators" ) == 0 )
     {
-#define _( x ) printf( #x "\n" );
-#include "generators.def"
+        const struct httpfs_generator *generator;
+
+        for ( generator = HTTPFS_GENERATORS ; generator->name ; generator++ )
+        {
+            printf( "%s\n" , generator->name );
+        }
     }
     else if ( argc == 3 && strcmp( argv[ 1 ] , "generate" ) == 0 )
     {
-        int i;
-        struct generator
+        if ( !httpfs_generate( argv[ 2 ] ) )
         {
-            const char *name;
-            void ( *function )();
+            usage();
+            return EXIT_FAILURE;
         }
-        generators[] = {
-#define _( x ) { #x , httpfs_generate_##x } ,
-#include "generators.def"
-        };
-
-        for ( i = 0 ; i < sizeof( generators ) / sizeof( struct generator ) ; i++ )
-        {
-            if ( strcmp( generators[ i ].name , argv[ 2 ] ) == 0 )
-            {
-                generators[ i ].function();
-                return EXIT_SUCCESS;
-            }
-        }
-
-        usage();
-        return EXIT_FAILURE;
     }
     else if ( ( argc == 4 || argc == 5 ) &&
               strcmp( argv[ 1 ] , "mount" ) == 0 )
     {
-        /* global context */
-        httpfs.php_url = argv[ 2 ];
-        httpfs.remote_chroot = ( argc == 5 ? argv[ 4 ] : NULL );
-        httpfs.curl = curl_easy_init();
+        struct httpfs httpfs;
+        const char *php_url;
+        const char *remote_chroot;
+        char *mount_point;
+        int rv;
 
-        if ( !httpfs.curl )
+        php_url = argv[ 2 ];
+        remote_chroot = ( argc == 5 ? argv[ 4 ] : NULL );
+        mount_point = argv[ 3 ];
+
+        rv = httpfs_fuse_start( &httpfs , php_url , remote_chroot , mount_point );
+
+        if ( rv )
         {
-            fprintf( stderr , "Can't initialize cURL\n" );
-            return EXIT_FAILURE;
-        }
+            fprintf( stderr , "Unable to mount: " );
 
-        check_remote_availability();
-        return httpfs_fuse_start( &httpfs , argv[ 3 ] );
+            switch ( rv )
+            {
+            case HTTPFS_FUSE_ERROR:
+                fprintf( stderr , "cannot initialize FUSE\n" );
+                break;
+
+            case HTTPFS_CURL_ERROR:
+                fprintf( stderr , "cannot initialize cURL\n" );
+                break;
+
+            case HTTPFS_UNREACHABLE_SERVER_ERROR:
+                fprintf( stderr , "cannot reach the remote server\n" );
+                break;
+
+            case HTTPFS_WRONG_CHROOT_ERROR:
+                fprintf( stderr , "cannot find the remote path\n" );
+                break;
+
+            case HTTPFS_ERRNO_ERROR:
+                fprintf( stderr , "errno (%i) %s\n" , errno , strerror( errno ) );
+                break;
+            }
+        }
     }
     else
     {
