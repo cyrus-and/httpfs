@@ -32,33 +32,20 @@ int main( int argc , char *argv[] )
     }
     else if ( argc == 2 && strcmp( argv[ 1 ] , "generators" ) == 0 )
     {
-#define _( x ) printf( #x "\n" );
-#include "generators.def"
+        const struct httpfs_generator *generator;
+
+        for ( generator = HTTPFS_GENERATORS ; generator->name ; generator++ )
+        {
+            printf( "%s\n" , generator->name );
+        }
     }
     else if ( argc == 3 && strcmp( argv[ 1 ] , "generate" ) == 0 )
     {
-        int i;
-        struct generator
+        if ( !httpfs_generate( argv[ 2 ] ) )
         {
-            const char *name;
-            void ( *function )();
+            usage();
+            return EXIT_FAILURE;
         }
-        generators[] = {
-#define _( x ) { #x , httpfs_generate_##x } ,
-#include "generators.def"
-        };
-
-        for ( i = 0 ; i < sizeof( generators ) / sizeof( struct generator ) ; i++ )
-        {
-            if ( strcmp( generators[ i ].name , argv[ 2 ] ) == 0 )
-            {
-                generators[ i ].function();
-                return EXIT_SUCCESS;
-            }
-        }
-
-        usage();
-        return EXIT_FAILURE;
     }
     else if ( ( argc == 4 || argc == 5 ) &&
               strcmp( argv[ 1 ] , "mount" ) == 0 )

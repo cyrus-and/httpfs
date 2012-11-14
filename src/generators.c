@@ -1,5 +1,28 @@
 #include <stdio.h>
 #include "httpfs.h"
+#include "generators.h"
+
+const struct httpfs_generator HTTPFS_GENERATORS[] = {
+#define _( x ) { #x , httpfs_generate_##x } ,
+#include "generators.def"
+    { NULL , NULL }
+};
+
+int httpfs_generate( const char *name )
+{
+    const struct httpfs_generator *generator;
+
+    for ( generator = HTTPFS_GENERATORS ; generator->name ; generator++ )
+    {
+        if ( strcmp( generator->name , name ) == 0 )
+        {
+            generator->function();
+            return 1;
+        }
+    }
+
+    return 0;
+}
 
 void httpfs_generate_php()
 {
