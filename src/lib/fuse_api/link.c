@@ -1,4 +1,4 @@
-#include "../httpfs.h"
+#include "httpfs.h"
 
 int httpfs_link( const char *path ,
                  const char *newpath )

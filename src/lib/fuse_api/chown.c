@@ -1,4 +1,4 @@
-#include "../httpfs.h"
+#include "httpfs.h"
 
 int httpfs_chown( const char *path ,
                   uid_t uid ,
