@@ -14,6 +14,6 @@ int httpfs_create( const char *path ,
     {
         HTTPFS_CHECK_RESPONSE_STATUS;
         HTTPFS_CLEANUP;
-        return 0;
+        HTTPFS_RETURN( 0 );
     }
 }

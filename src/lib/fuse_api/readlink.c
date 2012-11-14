@@ -20,6 +20,6 @@ int httpfs_readlink( const char *path ,
         }
 
         HTTPFS_CLEANUP;
-        return 0;
+        HTTPFS_RETURN( 0 );
     }
 }

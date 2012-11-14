@@ -22,7 +22,7 @@ static int check_remote_availability( struct httpfs *httpfs )
     {
         HTTPFS_CHECK_RESPONSE_STATUS;
         HTTPFS_CLEANUP;
-        return 0;
+        HTTPFS_RETURN( 0 );
     }
 }
 

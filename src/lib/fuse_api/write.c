@@ -23,7 +23,7 @@ int httpfs_write( const char *path ,
         if ( response.size != sizeof( uint32_t ) )
         {
             HTTPFS_CLEANUP;
-            return -EBADMSG;
+            HTTPFS_RETURN( EBADMSG );
         }
 
         write_size = ntohl( *( uint32_t * )response.payload );

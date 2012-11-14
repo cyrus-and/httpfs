@@ -20,7 +20,7 @@ int httpfs_read( const char *path ,
         if ( response.size > size )
         {
             HTTPFS_CLEANUP;
-            return -EBADMSG;
+            HTTPFS_RETURN( EBADMSG );
         }
 
         memcpy( buf , response.payload , response.size );

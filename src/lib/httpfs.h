@@ -89,6 +89,11 @@
         return -ECOMM; \
     } else
 
+/* return errno from FUSE callback functions */
+#define HTTPFS_RETURN( errno ) \
+    LOGF( "RETURN: %s (%i)" , strerror( errno ) , errno );  \
+    return -errno;
+
 /* check the response status and return if an error is occurred */
 #define HTTPFS_CHECK_RESPONSE_STATUS \
     response.payload = _out.payload + 1; \
@@ -99,13 +104,13 @@
     _HTTPFS_CHECK_HANDLE_ERROR( CANNOT_ACCESS , EACCES ) \
     _HTTPFS_CHECK_HANDLE_ERROR( NOT_PERMITTED , EPERM ) \
     case HTTPFS_STATUS_OK: _HTTPFS_DUMP_STATUS; break; \
-    default: HTTPFS_CLEANUP; return -EBADMSG; \
+    default: HTTPFS_CLEANUP; HTTPFS_RETURN( EBADMSG ); \
     }
 
 #define _HTTPFS_CHECK_HANDLE_ERROR( status , errno ) \
     case HTTPFS_STATUS_##status: \
     _HTTPFS_DUMP_STATUS; HTTPFS_CLEANUP; \
-    return -errno;
+    HTTPFS_RETURN( errno )
 
 #define _HTTPFS_DUMP_STATUS \
     LOGF( "RESPONSE: %s (%i)" , \

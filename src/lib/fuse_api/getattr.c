@@ -27,7 +27,7 @@ int httpfs_getattr( const char *path ,
         if ( response.size != sizeof( struct attrs ) )
         {
             HTTPFS_CLEANUP;
-            return -EBADMSG;
+            HTTPFS_RETURN( EBADMSG );
         }
 
         memset( stbuf , 0 , sizeof( struct stat ) );
@@ -47,6 +47,6 @@ int httpfs_getattr( const char *path ,
         stbuf->st_blocks = ntohl( attrs.blocks );
 
         HTTPFS_CLEANUP;
-        return 0;
+        HTTPFS_RETURN( 0 );
     }
 }
