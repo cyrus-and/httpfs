@@ -22,33 +22,6 @@ static void info()
     fprintf( stderr , "httpfs " HTTPFS_VERSION "\n" );
 }
 
-static void check_remote_availability()
-{
-    struct stat ss;
-    int errno;
-
-    if ( errno = -httpfs_getattr( "/" , &ss ) , errno )
-    {
-        fprintf( stderr , "Unable to mount: " );
-
-        switch ( errno )
-        {
-        case ECOMM:
-            fprintf( stderr , "cannot reach the remote server\n" );
-            break;
-
-        case ENOENT:
-            fprintf( stderr , "cannot find the remote path\n" );
-            break;
-
-        default:
-            fprintf( stderr , "errno (%i) %s\n" , errno , strerror( errno ) );
-        }
-
-        exit( EXIT_FAILURE );
-    }
-}
-
 int main( int argc , char *argv[] )
 {
     if ( argc == 2 && strcmp( argv[ 1 ] , "--version" ) == 0 )
@@ -103,7 +76,7 @@ int main( int argc , char *argv[] )
             return EXIT_FAILURE;
         }
 
-        check_remote_availability();
+        /* check_remote_availability(); */
         return httpfs_fuse_start( &httpfs , argv[ 3 ] );
     }
     else
