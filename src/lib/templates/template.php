@@ -1,7 +1,7 @@
 <?php
 
 error_reporting( 0 );
-if ( DEBUG ) set_error_handler( 'store_error' );
+if ( VERBOSE ) set_error_handler( 'store_error' );
 
 /* UTILITY */
 

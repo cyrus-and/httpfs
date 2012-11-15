@@ -68,9 +68,7 @@ int httpfs_fuse_start( struct httpfs *httpfs ,
     argc = 0;
     argv[ argc++ ] = "httpfs";
     argv[ argc++ ] = "-s"; /* single thread */
-#ifndef NDEBUG
-    argv[ argc++ ] = "-d"; /* debug and core dump */
-#endif
+    if ( HTTPFS_VERBOSE ) argv[ argc++ ] = "-d"; /* debug and core dump */
     argv[ argc++ ] = mount_point;
 
     /* start loop */

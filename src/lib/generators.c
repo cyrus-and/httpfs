@@ -48,10 +48,8 @@ void httpfs_generate_php()
                 *p , ( int )( p - HTTPFS_STATUS_NAMES ) );
     }
 
-#ifndef NDEBUG
-    /* debug mode */
-    printf( "\ndefine( 'DEBUG' , TRUE );\n\n" );
-#endif
+    /* verbose mode */
+    if ( HTTPFS_VERBOSE ) printf( "\ndefine( 'VERBOSE' , TRUE );\n\n" );
 
     printf( "\n?>" );
 

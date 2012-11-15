@@ -20,8 +20,18 @@ static void info()
     fprintf( stderr , "httpfs " HTTPFS_VERSION "\n" );
 }
 
+static void set_verbose_mode()
+{
+    char *env;
+
+    env = getenv( "HTTPFS_VERBOSE" );
+    if ( env && strcmp( env , "1" ) == 0 ) HTTPFS_VERBOSE = 1;
+}
+
 int main( int argc , char *argv[] )
 {
+    set_verbose_mode();
+
     if ( argc == 2 && strcmp( argv[ 1 ] , "--version" ) == 0 )
     {
         info();
