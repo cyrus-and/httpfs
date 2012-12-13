@@ -16,7 +16,7 @@
 
 #define DUMP_RAW_DATA( label , raw_data ) \
     do if ( HTTPFS_VERBOSE ) { \
-            fprintf( stderr , DEBUG_PREFIX "%s%lu byte: " , \
+            fprintf( stderr , DEBUG_PREFIX "%s%zu byte: " , \
                      label , raw_data.size ); \
             httpfs_dump_raw_data( &raw_data ); } \
     while ( 0 )
