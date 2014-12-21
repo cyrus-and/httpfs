@@ -28,9 +28,9 @@ function dump_error( $error , $custom_error_message = null )
 
 function httpfs_getattr( $data )
 {
-    $fields = unpack( 'a*path' , $data );
+    $path = explode( "\x00" , $data , 2 )[ 0 ];
 
-    $s = lstat( $fields[ 'path' ] );
+    $s = lstat( $path );
     if ( $s )
     {
         dump_ok();
@@ -57,9 +57,9 @@ function httpfs_getattr( $data )
 
 function httpfs_readdir( $data )
 {
-    $fields = unpack( 'a*path' , $data );
+    $path = explode( "\x00" , $data , 2 )[ 0 ];
 
-    $d = scandir( $fields[ 'path' ] );
+    $d = scandir( $path );
     if ( $d )
     {
         dump_ok();
@@ -76,9 +76,10 @@ function httpfs_readdir( $data )
 
 function httpfs_read( $data )
 {
-    $fields = unpack( 'Nsize/Noffset/a*path' , $data );
+    $fields = unpack( 'Nsize/Noffset' , $data );
+    $path = explode( "\x00" , substr( $data , 8 ) , 2 )[ 0 ];
 
-    $f = fopen( $fields[ 'path' ] , 'r' );
+    $f = fopen( $path , 'r' );
     if ( $f )
     {
         dump_ok();
@@ -114,9 +115,10 @@ function httpfs_write( $data )
 
 function httpfs_truncate( $data )
 {
-    $fields = unpack( 'Noffset/a*path' , $data );
+    $fields = unpack( 'Noffset' , $data );
+    $path = explode( "\x00" , substr( $data , 4 ) , 2 )[ 0 ];
 
-    $f = fopen( $fields[ 'path' ] , 'r+' );
+    $f = fopen( $path , 'r+' );
     if ( $f )
     {
         dump_ok();
@@ -131,9 +133,10 @@ function httpfs_truncate( $data )
 
 function httpfs_create( $data )
 {
-    $fields = unpack( 'Nmode/a*path' , $data );
+    $fields = unpack( 'Nmode' , $data );
+    $path = explode( "\x00" , substr( $data , 4 ) , 2 )[ 0 ];
 
-    $f = fopen( $fields[ 'path' ] , 'w' );
+    $f = fopen( $path , 'w' );
     if ( $f )
     {
         dump_ok();
@@ -147,9 +150,9 @@ function httpfs_create( $data )
 
 function httpfs_unlink( $data )
 {
-    $fields = unpack( 'a*path' , $data );
+    $path = explode( "\x00" , $data , 2 )[ 0 ];
 
-    $u = unlink( $fields[ 'path' ] );
+    $u = unlink( $path );
     if ( $u )
     {
         dump_ok();
@@ -162,9 +165,10 @@ function httpfs_unlink( $data )
 
 function httpfs_mkdir( $data )
 {
-    $fields = unpack( 'Nmode/a*path' , $data );
+    $fields = unpack( 'Nmode' , $data );
+    $path = explode( "\x00" , substr( $data , 4 ) , 2 )[ 0 ];
 
-    $m = mkdir( $fields[ 'path' ] , $fields[ 'mode' ] );
+    $m = mkdir( $path , $fields[ 'mode' ] );
     if ( $m )
     {
         dump_ok();
@@ -177,9 +181,9 @@ function httpfs_mkdir( $data )
 
 function httpfs_rmdir( $data )
 {
-    $fields = unpack( 'a*path' , $data );
+    $path = explode( "\x00" , $data , 2 )[ 0 ];
 
-    $u = rmdir( $fields[ 'path' ] );
+    $u = rmdir( $path );
     if ( $u )
     {
         dump_ok();
@@ -220,9 +224,9 @@ function httpfs_link( $data )
 
 function httpfs_readlink( $data )
 {
-    $fields = unpack( 'a*path' , $data );
+    $path = explode( "\x00" , $data , 2 )[ 0 ];
 
-    $r = readlink( $fields[ 'path' ] );
+    $r = readlink( $path );
     if ( $r )
     {
         dump_ok();
@@ -251,9 +255,10 @@ function httpfs_symlink( $data )
 
 function httpfs_chmod( $data )
 {
-    $fields = unpack( 'Nmode/a*path' , $data );
+    $fields = unpack( 'Nmode' , $data );
+    $path = explode( "\x00" , substr( $data , 4 ) , 2 )[ 0 ];
 
-    $c = chmod( $fields[ 'path' ] , $fields[ 'mode' ] );
+    $c = chmod( $path , $fields[ 'mode' ] );
     if ( $c )
     {
         dump_ok();
@@ -266,17 +271,18 @@ function httpfs_chmod( $data )
 
 function httpfs_chown( $data )
 {
-    $fields = unpack( 'Nuid/Ngid/a*path' , $data );
+    $fields = unpack( 'Nuid/Ngid' , $data );
+    $path = explode( "\x00" , substr( $data , 8 ) , 2 )[ 0 ];
 
     if ( $fields[ 'uid' ] != 0xffffffff )
     {
-        $u = chown( $fields[ 'path' ] , $fields[ 'uid' ] );
+        $u = chown( $path , $fields[ 'uid' ] );
         $g = TRUE;
     }
 
     if ( $fields[ 'gid' ] != 0xffffffff )
     {
-        $g = chgrp( $fields[ 'path' ] , $fields[ 'gid' ] );
+        $g = chgrp( $path , $fields[ 'gid' ] );
         $u = TRUE;
     }
 
